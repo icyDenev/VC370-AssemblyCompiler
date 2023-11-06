@@ -1,10 +1,10 @@
-<mxfile host="app.diagrams.net" modified="2023-11-04T17:43:59.279Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0" etag="eO5IaIDgepURqs2O26IQ" version="22.0.8" type="github">
+<mxfile host="app.diagrams.net" modified="2023-11-06T03:33:46.185Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0" etag="xEkcWlFlUoip_DdEEY8J" version="22.0.8" type="github">
   <diagram name="Page-1" id="WOOYxGxmAVnwyaf9KgKC">
-    <mxGraphModel dx="2800" dy="1647" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2726" dy="935" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="BRLun8AiaISg7UxHLUC3-3" value="# m_sfile - the source file&lt;br&gt;&lt;br&gt;+ FileAccess(int argc, char *argv[]) - Opens the file&lt;br&gt;+ GetNextLine (string &amp;amp;a_buff) - gets the next line and returns bool (true if there is a line, false if it is the end of the file)&lt;br&gt;+ ~FileAccess() - Closes the file&lt;br&gt;+ Rewind() - Put file pointer back to beginning of the file&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-3" value="# m_sfile - the source file&lt;br&gt;&lt;br&gt;+ FileAccess(int argc, char *argv[]) - Opens the file&lt;br&gt;+ GetNextLine (string &amp;amp;a_buff) - gets the next line and returns bool (true if there is a line, false if it is the end of the file)&lt;br&gt;+ ~FileAccess() - Closes the file&lt;br&gt;+ Rewind() - Put file pointer back to beginning of the file&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1440" y="30" width="340" height="580" as="geometry" />
         </mxCell>
         <mxCell id="V5sZV8SHYDdwcoLCBRRb-1" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Project Elements:&lt;/font&gt;&lt;br&gt;&lt;br&gt;- File Access (read, write functions)&lt;br&gt;- Parsing Input Line (parse function)&lt;br&gt;- Symbol Table (map)&lt;br&gt;- Translating operands into numerical values (enum)&lt;br&gt;- Code generation (Assembly to Op Code)&lt;br&gt;- Error Reporting (complete syntax check, throw error functions)&lt;br&gt;- Independent Line-by-line execution&lt;br&gt;- String to int conversion&lt;br&gt;- Two-pass system&lt;br&gt;- Emulation (Assembly -&amp;gt; Machine Code -&amp;gt; Execution)&amp;nbsp;" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
@@ -43,7 +43,7 @@
             <mxPoint x="510" y="140" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="qyVeD-U7BfDSGG9qNvsf-8" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="qyVeD-U7BfDSGG9qNvsf-12" target="qyVeD-U7BfDSGG9qNvsf-6" edge="1" source="qyVeD-U7BfDSGG9qNvsf-1">
+        <mxCell id="qyVeD-U7BfDSGG9qNvsf-8" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="qyVeD-U7BfDSGG9qNvsf-12" source="qyVeD-U7BfDSGG9qNvsf-1" target="qyVeD-U7BfDSGG9qNvsf-6" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="380" y="110" as="sourcePoint" />
             <mxPoint x="535" y="160" as="targetPoint" />
@@ -54,7 +54,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="qyVeD-U7BfDSGG9qNvsf-9" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="qyVeD-U7BfDSGG9qNvsf-12" edge="1" source="qyVeD-U7BfDSGG9qNvsf-1">
+        <mxCell id="qyVeD-U7BfDSGG9qNvsf-9" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="qyVeD-U7BfDSGG9qNvsf-12" source="qyVeD-U7BfDSGG9qNvsf-1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="380" y="110" as="sourcePoint" />
             <mxPoint x="530" y="160" as="targetPoint" />
@@ -520,37 +520,37 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-1" value="# m_ErrorMsgs - List of all the errors that were reported&lt;br&gt;# m_IsThereError - bool to indicate if there is an error in the code; if yes, the machine code shouldn&#39;t run&lt;br&gt;&lt;br&gt;+ InitErrorReporting () - clears the error messages that were accumulated&lt;br&gt;+ RecordError (const string &amp;amp;a_msg) - records a message in the ErrorMsgs list&lt;br&gt;+ IsThereError () - bool that returns the value of m_IsThereError&lt;br&gt;+ DisplayErrors () - Displays all the errors that were reported and then reinitializes the error reporting system" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-1" value="# m_errorMsgs - List of all the errors that were reported&lt;br&gt;# m_isThereError - bool to indicate if there is an error in the code; if yes, the machine code shouldn&#39;t run&lt;br&gt;&lt;br&gt;+ InitErrorReporting () - clears the error messages that were accumulated&lt;br&gt;+ RecordError (const string &amp;amp;a_msg) - records a message in the ErrorMsgs list&lt;br&gt;+ IsThereError () - bool that returns the value of m_IsThereError&lt;br&gt;+ DisplayErrors () - Displays all the errors that were reported and then reinitializes the error reporting system" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1440" y="640" width="340" height="580" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-2" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;FileAccess&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-2" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;FileAccess&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" parent="1" vertex="1">
           <mxGeometry x="1555" y="50" width="110" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-4" value="--------- ASSEMBLY CODE ---------&lt;br&gt;# m_Label&lt;br&gt;# m_OpCodeSym&lt;br&gt;# m_Operand&lt;br&gt;&lt;br&gt;--------- MACHINE CODE ---------&lt;br&gt;# m_OpCodeNum&lt;br&gt;&lt;br&gt;--------- GENERAL INSTRUCTION ---------&lt;br&gt;# m_Instruction&lt;br&gt;# m_Type&lt;br&gt;# m_IsNumOperand&lt;br&gt;# m_OperandNumValue&lt;br&gt;# InstructionType&lt;br&gt;&lt;br&gt;+ ParseInstruction (string a_buff) - Parses instruction into Label, opCode, and Operand and returns instruction type&lt;br&gt;+ LocationNextInstruction (int a_loc)&lt;br&gt;+ IsInstructionValid () - bool function that checks if the instruction is valid or not" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-4" value="--------- ASSEMBLY CODE ---------&lt;br&gt;# m_label&lt;br&gt;# m_opCodeSym&lt;br&gt;# m_operand&lt;br&gt;&lt;br&gt;--------- MACHINE CODE ---------&lt;br&gt;# m_opCodeNum&lt;br&gt;&lt;br&gt;--------- GENERAL INSTRUCTION ---------&lt;br&gt;# m_instruction&lt;br&gt;# m_type&lt;br&gt;# m_isNumOperand&lt;br&gt;# m_operandNumValue&lt;br&gt;# InstructionType - enum class&lt;br&gt;&lt;br&gt;+ ParseInstruction (string a_buff) - Parses instruction into Label, opCode, and Operand and returns instruction type&lt;br&gt;+ LocationNextInstruction (int a_loc)&lt;br&gt;+ IsInstructionValid () - bool function that checks if the instruction is valid or not&lt;br&gt;+ DivideInstruction(const string &amp;amp;a_buff) - divides the function into label, opcode, operand, and extra code" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1810" y="30" width="340" height="580" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-5" value="# m_Memory - The memory array of the VC370&lt;br&gt;# m_accum - accumulator for the VC370&lt;br&gt;&lt;br&gt;+ Emulator () - resets the memory and accumulator&lt;br&gt;+ InsertMemory (const int &amp;amp;a_loc, const int &amp;amp;a_contents) - bool function that puts content in the memory and returns true if the location is legal. If the memory location is not okay, returns false&lt;br&gt;+ RunProgram () - runs the emulation by starting at memory location 100" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-5" value="# m_memory - The memory array of the VC370&lt;br&gt;# m_accum - accumulator for the VC370&lt;br&gt;&lt;br&gt;+ Emulator () - resets the memory and accumulator&lt;br&gt;+ InsertMemory (const int &amp;amp;a_loc, const int &amp;amp;a_contents) - bool function that puts content in the memory and returns true if the location is legal. If the memory location is not okay, returns false&lt;br&gt;+ RunProgram () - runs the emulation by starting at memory location 100" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1810" y="640" width="340" height="580" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-6" value="# m_SymTable - Map&amp;lt;string, int&amp;gt; with key - the label and value - the memory location&lt;br&gt;# multiplyDefinedSymbol - const equal to -1 to ensure that we catch symbol / label that is defined more than once&lt;br&gt;&lt;br&gt;+ AddSymbol (const string &amp;amp;a_symbol, const int &amp;amp;a_loc)&lt;br&gt;+ DisplaySymbolTable ()&lt;br&gt;+ LookupSymbol (const string &amp;amp;a_symbol, const string &amp;amp;a_loc) - bool function (returns true if the label and location appear in the table; if not, it returns false)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-6" value="# m_symTab - Map&amp;lt;string, int&amp;gt; with key - the label and value - the memory location&lt;br&gt;# multiplyDefinedSymbol - const equal to -1 to ensure that we catch symbol / label that is defined more than once&lt;br&gt;&lt;br&gt;+ AddSymbol (const string &amp;amp;a_symbol, const int &amp;amp;a_loc)&lt;br&gt;+ DisplaySymbolTable ()&lt;br&gt;+ LookupSymbol (const string &amp;amp;a_symbol, const string &amp;amp;a_loc) - bool function (returns true if the label and location appear in the table; if not, it returns false)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="2180" y="30" width="340" height="580" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-7" value="# m_fileAcc - fileAccess object&lt;br&gt;# m_Instruction - Instruction object&lt;br&gt;# m_symTab - SymbolTable object&lt;br&gt;# m_error - Errors object&lt;br&gt;# m_emulator - Emulator object&lt;br&gt;&lt;br&gt;+ Assembler (int argc, chat *argv[]) - Opens the file&lt;br&gt;+ ~Assembler () - Closes the file&lt;br&gt;+ PassI () - Puts the symbols / labels in the Symbol Table as well as their locations&lt;br&gt;+ PassII () - Translates the source code into machine code and reports errors if it finds any&lt;br&gt;+ DisplaySymTable () - displays the symbol table using the SymbolTable method&lt;br&gt;+ RunProgramInEmulator() - runs the emulation using the Emulator method" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-7" value="# m_fileAcc - fileAccess object&lt;br&gt;# m_inst - Instruction object&lt;br&gt;# m_symTab - SymbolTable object&lt;br&gt;# m_error - Errors object&lt;br&gt;# m_emulator - Emulator object&lt;br&gt;&lt;br&gt;+ Assembler (int argc, chat *argv[]) - Opens the file&lt;br&gt;+ ~Assembler () - Closes the file&lt;br&gt;+ PassI () - Puts the symbols / labels in the Symbol Table as well as their locations&lt;br&gt;+ PassII () - Translates the source code into machine code and reports errors if it finds any&lt;br&gt;+ DisplaySymTable () - displays the symbol table using the SymbolTable method&lt;br&gt;+ RunProgramInEmulator() - runs the emulation using the Emulator method" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="2180" y="640" width="340" height="580" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-9" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Instruction&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-9" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Instruction&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" parent="1" vertex="1">
           <mxGeometry x="1925" y="50" width="110" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-10" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;SymbolTable&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-10" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;SymbolTable&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" parent="1" vertex="1">
           <mxGeometry x="2295" y="50" width="110" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-11" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Error&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-11" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Error&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" parent="1" vertex="1">
           <mxGeometry x="1555" y="660" width="110" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-12" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Emulator&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-12" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Emulator&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" parent="1" vertex="1">
           <mxGeometry x="1925" y="660" width="110" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="BRLun8AiaISg7UxHLUC3-13" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Assembly&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" vertex="1" parent="1">
+        <mxCell id="BRLun8AiaISg7UxHLUC3-13" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Assembly&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" parent="1" vertex="1">
           <mxGeometry x="2295" y="660" width="110" height="30" as="geometry" />
         </mxCell>
       </root>
