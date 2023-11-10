@@ -1,7 +1,7 @@
 #include "Assembly.h"
 #include "stdafx.h"
 
-Assembler::Assembler(int& argc, char* argv[]) : m_fileA                     cc(argc, argv) { }
+Assembler::Assembler(int& argc, char* argv[]) : m_fileAcc(argc, argv) { }
 
 Assembler::~Assembler() { }
 
