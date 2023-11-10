@@ -29,14 +29,19 @@ void Assembler::PassI() {
 		if (st == Instruction::InstructionType::ST_END)
 			return;
 		
-		// If the instruction is a comment, then we can skip it
-		if (st == Instruction::InstructionType::ST_COMMENT)
+		// If the instruction is a comment or blank, then we can skip it
+		if (st == Instruction::InstructionType::ST_COMMENT_OR_BLANK
+			|| st == Instruction::InstructionType::ST_MACHINE)
 			continue;
 
 		// If the instruction is a label,
 		// then we can add it to the symbol table
 		if (!m_inst.IsLabelBlank()) {
 			m_symTab.AddSymbol(m_inst.GetLabel(), loc);
+		}
+
+		if (m_inst.GetOpCode() == "ORG") {
+			
 		}
 
 		// Move to the next memory location
