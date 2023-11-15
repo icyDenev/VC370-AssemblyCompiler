@@ -25,11 +25,21 @@ public:
         ERR_CONSTANT_OVERFLOW,
     };
 
+    // Structure to hold error information
+    struct ErrorMsg {
+        ErrorCode m_emsg;
+        int m_loc;
+
+        ErrorMsg(ErrorCode emsg, int loc) : m_emsg(emsg), m_loc(loc) { }
+    };
+
+    Error() { InitErrorReporting(); }
+
     // Initializes error reports
     static void InitErrorReporting();
 
     // Records an error message
-    static void RecordError(const ErrorCode a_emsg);
+    static void RecordError(const ErrorMsg a_emsg);
 
     // Returns true if there were any error messages recorded
     static bool WasThereErrors();
@@ -39,7 +49,7 @@ public:
 
 private:
     // List of error messages
-    static vector<string> m_ErrorMsgs;
+    static vector<ErrorMsg> m_ErrorMsgs;
     // Variable to keep track of whether there were any error messages
     static bool m_WasErrorMessages;
 };

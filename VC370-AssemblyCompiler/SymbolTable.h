@@ -2,8 +2,7 @@
 //		Symbol table class.
 //
 #pragma once
-
-
+#include "stdafx.h"
 
 // This class is our symbol table.
 class SymbolTable {

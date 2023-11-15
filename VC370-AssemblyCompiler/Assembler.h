@@ -8,6 +8,7 @@
 #include "Instruction.h"
 #include "FileAccess.h"
 #include "Emulator.h"
+#include "stdafx.h"
 
 
 class Assembler {

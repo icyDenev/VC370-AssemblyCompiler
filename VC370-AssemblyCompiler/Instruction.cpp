@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "Error.h"
 
-Instruction::InstructionType Instruction::ParseInstruction(const std::string& a_buff)
+Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
 {
     DivideInstruction(a_buff);
 
@@ -17,7 +17,7 @@ Instruction::InstructionType Instruction::ParseInstruction(const std::string& a_
     if (isMachineCode())
         return InstructionType::ST_MACHINE;
 
-    Error::RecordError(Error::ErrorCode::ERR_INVALID_OPCODE);
+    Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPCODE, 0));
     
     return InstructionType::ST_COMMENT_OR_BLANK;
 }

@@ -128,7 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Assembly.h" />
+    <ClInclude Include="Assembler.h" />
     <ClInclude Include="Emulator.h" />
     <ClInclude Include="Error.h" />
     <ClInclude Include="FileAccess.h" />
@@ -137,7 +137,8 @@
     <ClInclude Include="SymbolTable.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Assembly.cpp" />
+    <ClCompile Include="AssemblerTest.cpp" />
+    <ClCompile Include="Assembler.cpp" />
     <ClCompile Include="Emulator.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="FileAccess.cpp" />

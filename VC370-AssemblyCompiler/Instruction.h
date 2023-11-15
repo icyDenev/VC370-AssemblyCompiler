@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
+#include "stdafx.h"
 
 class Instruction
 {
 public:
-	Instruction() {};
-	~Instruction() {};
+	Instruction() {}
+	~Instruction() {}
 
 	enum class InstructionType {
 		ST_ASSEMBLY,
@@ -52,8 +52,8 @@ private:
 	bool m_isNumericOperand;
 	bool m_numericOperandValue;
 
-	const string MachineLangInstructions[13]; // { "ADD", "SUB", "MULT", "DIV", "LOAD", "STORE", "READ", "WRITE", "B", "BM", "BZ", "BP", "HALT" };
-	const string AssemblyLangInstructions[4]; // { "DC", "DS", "ORG", "END" };
+	const string MachineLangInstructions[13] { "ADD", "SUB", "MULT", "DIV", "LOAD", "STORE", "READ", "WRITE", "B", "BM", "BZ", "BP", "HALT" };
+	const string AssemblyLangInstructions[4] { "DC", "DS", "ORG", "END" };
 
 };
 

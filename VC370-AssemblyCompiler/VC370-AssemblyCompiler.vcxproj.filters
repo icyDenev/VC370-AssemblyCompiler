@@ -30,7 +30,7 @@
     <ClInclude Include="Emulator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Assembly.h">
+    <ClInclude Include="Assembler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -53,10 +53,13 @@
     <ClCompile Include="Emulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Assembly.cpp">
+    <ClCompile Include="Assembler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AssemblerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

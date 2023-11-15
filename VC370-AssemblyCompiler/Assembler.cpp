@@ -1,4 +1,4 @@
-#include "Assembly.h"
+#include "Assembler.h"
 #include "stdafx.h"
 
 Assembler::Assembler(int& argc, char* argv[]) : m_fileAcc(argc, argv) { }
@@ -41,7 +41,13 @@ void Assembler::PassI() {
 		}
 
 		if (m_inst.GetOpCode() == "ORG") {
-			
+			loc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()));
+		}
+		else if (m_inst.GetOpCode() == "DS") {
+			loc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()));
+		}
+		else {
+			loc = m_inst.NextInstructionLocation(loc);
 		}
 
 		// Move to the next memory location
