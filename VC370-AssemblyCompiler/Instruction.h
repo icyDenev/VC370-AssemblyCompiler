@@ -52,8 +52,8 @@ private:
 	bool m_isNumericOperand;
 	bool m_numericOperandValue;
 
-	const string MachineLangInstructions[13] { "ADD", "SUB", "MULT", "DIV", "LOAD", "STORE", "READ", "WRITE", "B", "BM", "BZ", "BP", "HALT" };
-	const string AssemblyLangInstructions[4] { "DC", "DS", "ORG", "END" };
+	string MachineLangInstructions[13] { "ADD", "SUB", "MULT", "DIV", "LOAD", "STORE", "READ", "WRITE", "B", "BM", "BZ", "BP", "HALT" };
+	string AssemblyLangInstructions[4] { "DC", "DS", "ORG", "END" };
 
 };
 

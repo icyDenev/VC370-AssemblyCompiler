@@ -2,13 +2,21 @@
 #include "stdafx.h"
 #include "Error.h"
 
+/// <summary>
+/// Parses the instruction and returns the type of instruction
+/// </summary>
+/// <param name="a_buff">The current line that is in the buffer</param>
+/// <returns>Returns the instruction type</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/15/2023</date>
 Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
 {
+    // Identify the type of the instruction
+    if (a_buff.empty() || a_buff[0] == ';')
+        return InstructionType::ST_COMMENT_OR_BLANK;
+
     DivideInstruction(a_buff);
 
-    // Identify the type of the instruction
-    if (m_opCode.empty() || m_opCode[0] == ';')
-        return InstructionType::ST_COMMENT_OR_BLANK;
     //TODO: Used boost::to_upper_copy to make the opCode case insensitive
     if (m_opCode == "END")
         return InstructionType::ST_END;
@@ -24,14 +32,26 @@ Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
 
 int Instruction::NextInstructionLocation(const int& a_loc)
 {
-    return 0;
+    return a_loc + 1;
 }
 
+/// <summary>
+/// Returns the label of the instruction
+/// </summary>
+/// <returns>Returns the label of the instruction</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/15/2023</date>
 std::string& Instruction::GetLabel()
 {
     return m_label;
 }
 
+/// <summary>
+/// Returns the opCode of the instruction
+/// </summary>
+/// <returns> Returns the opCode of the instruction </returns>
+/// <author>Hristo Denev</author>
+/// <date>11/15/2023</date>
 std::string& Instruction::GetOpCode()
 {
     return m_opCode;
@@ -80,7 +100,7 @@ void Instruction::DivideInstruction(const std::string& a_buff)
 
 bool Instruction::isAssemblyCode()
 {
-    if (AssemblyLangInstructions->find(m_opCode) != string::npos)
+    if (find(begin(AssemblyLangInstructions), end(AssemblyLangInstructions), m_opCode) != end(AssemblyLangInstructions))
         return true;
 
     return false;
@@ -88,7 +108,7 @@ bool Instruction::isAssemblyCode()
 
 bool Instruction::isMachineCode()
 {
-    if (MachineLangInstructions->find(m_opCode) != string::npos)
+    if (find(begin(MachineLangInstructions), end(MachineLangInstructions), m_opCode) != end(MachineLangInstructions))
 		return true;
 
     return false;

@@ -3,11 +3,20 @@
  */
 #include "stdafx.h"     // This must be present if you use precompiled headers which you will use. 
 #include <stdio.h>
+#include <string>
 
 #include "Assembler.h"
 
 int main(int argc, char* argv[])
 {
+#define TEST
+#ifdef TEST
+    argc = 2;
+    const char* args[2] { "AssemblerTest", "C:\\Users\\icyde\\source\\repos\\CMPS361\\VC370-AssemblyCompiler\\VC370-AssemblyCompiler\\x64\\Release\\test.asm"};
+
+    argv = const_cast<char**>(args);
+
+#endif
     Assembler assem(argc, argv);
 
     // Establish the location of the labels:

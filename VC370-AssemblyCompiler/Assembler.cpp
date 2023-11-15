@@ -30,8 +30,7 @@ void Assembler::PassI() {
 			return;
 		
 		// If the instruction is a comment or blank, then we can skip it
-		if (st == Instruction::InstructionType::ST_COMMENT_OR_BLANK
-			|| st == Instruction::InstructionType::ST_MACHINE)
+		if (st == Instruction::InstructionType::ST_COMMENT_OR_BLANK)
 			continue;
 
 		// If the instruction is a label,
@@ -41,16 +40,13 @@ void Assembler::PassI() {
 		}
 
 		if (m_inst.GetOpCode() == "ORG") {
-			loc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()));
+			loc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
 		}
 		else if (m_inst.GetOpCode() == "DS") {
-			loc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()));
+			loc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()) - 1);
 		}
 		else {
 			loc = m_inst.NextInstructionLocation(loc);
 		}
-
-		// Move to the next memory location
-		m_inst.NextInstructionLocation(loc);
 	}
 }
