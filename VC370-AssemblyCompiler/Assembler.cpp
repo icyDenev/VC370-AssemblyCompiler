@@ -51,6 +51,13 @@ void Assembler::PassI() {
 	}
 }
 
+/// <summary>
+/// The Pass II function of the assembler that reads the source file
+/// and translates the assembly instructions into machine code
+/// </summary>
+/// <returns>nothing</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/15/2023</date>
 void Assembler::PassII() {
 	m_fileAcc.Rewind();
 
@@ -61,16 +68,19 @@ void Assembler::PassII() {
 		string line; // Read the next line from the source file
 		int contents; // The contents of the line (opcode and operand)
 
-		Instruction::InstructionType st = m_inst.ParseInstruction(line);
-
 		// Check if there are more lines to read
 		// If not, pass II is completed
 		if (!m_fileAcc.GetNextLine(line)) {
-			if (m_inst.GetOpCode() != "END") {
-				// TODO: Report error
-			}
-
 			return;
+		}
+
+		Instruction::InstructionType st = m_inst.ParseInstruction(line);
+
+		// If the instruction is an error, then we can skip it
+		if (st == Instruction::InstructionType::ST_ERROR) {
+			// Report Error
+			m_emul.insertMemory(loc, -1);
+			continue;
 		}
 
 		// If the instruction is an END command, then Pass II is completed
@@ -85,16 +95,34 @@ void Assembler::PassII() {
 
 		if (st == Instruction::InstructionType::ST_MACHINE) {
 			// TODO: Implement the machine code translation
-		}
+			if (!m_symTab.LookupSymbol(m_inst.GetOperand(), loc)) {
+				// Report Error
+				m_emul.insertMemory(loc, -1);
+				continue;
+			}
 
-		if (m_inst.GetOpCode() == "ORG") {
-			loc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
+			m_emul.insertMemory(loc, m_inst.GetNumericOperandValue() * 10000 + stoi(m_inst.GetOperand()));
 		}
-		else if (m_inst.GetOpCode() == "DS") {
-			loc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()) - 1);
+		else // If it is not a machine instruction, then it is an assembly instruction
+		{
+			// If the instruction is an ORG or DS command, then we have to update the location accordingly
+			if (m_inst.GetOpCode() == "ORG") {
+				loc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
+				
+				continue;
+			}
+			else if (m_inst.GetOpCode() == "DS") {
+				loc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()) - 1);
+
+				continue;
+			}
+			// If the Assembly Instruction is not an ORG, DS or END command, then it is the DC command
+			else {
+				m_emul.insertMemory(loc, 00 + stoi(m_inst.GetOperand()));
+			}
 		}
-		else {
-			loc = m_inst.NextInstructionLocation(loc);
-		}
+		
+		// If the instruction is not an ORG or DS command, then we can update the location by going to loc + 1
+		loc = m_inst.NextInstructionLocation(loc);
 	}
 }

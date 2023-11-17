@@ -24,8 +24,7 @@ void SymbolTable::DisplaySymbolTable()
 
 bool SymbolTable::LookupSymbol(string& a_symbol, int& a_loc)
 {
-	if (m_symbolTable[a_symbol] != multiplyDefinedSymbol) {
-		a_loc = m_symbolTable[a_symbol];
+	if (m_symbolTable[a_symbol] == a_loc && m_symbolTable.find(a_symbol) != m_symbolTable.end()) {
 		return true;
 	}
 

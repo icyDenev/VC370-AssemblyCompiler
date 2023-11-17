@@ -27,7 +27,7 @@ Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
 
     Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPCODE, 0));
     
-    return InstructionType::ST_COMMENT_OR_BLANK;
+    return InstructionType::ST_ERROR;
 }
 
 int Instruction::NextInstructionLocation(const int& a_loc)
@@ -60,6 +60,63 @@ std::string& Instruction::GetOpCode()
 std::string& Instruction::GetOperand()
 {
     return m_operand;
+}
+
+
+/// <summary>
+/// Returns the numeric value of the operand
+/// </summary>
+/// <returns>Returns the numeric value of the operand</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/17/2023</date>
+int Instruction::GetNumericOperandValue()
+{
+    if (m_opCode == "ADD") {
+        m_numericOperandValue = 1;
+    }
+    else if (m_opCode == "SUB") {
+        m_numericOperandValue = 2;
+    }
+    else if (m_opCode == "MULT") {
+		m_numericOperandValue = 3;
+	}
+    else if (m_opCode == "DIV") {
+		m_numericOperandValue = 4;
+	}
+    else if (m_opCode == "LOAD") {
+		m_numericOperandValue = 5;
+	}
+    else if (m_opCode == "STORE") {
+		m_numericOperandValue = 6;
+	}
+    else if (m_opCode == "READ") {
+		m_numericOperandValue = 7;
+	}
+    else if (m_opCode == "WRITE") {
+		m_numericOperandValue = 8;
+	}
+    else if (m_opCode == "B") {
+		m_numericOperandValue = 9;
+	}
+    else if (m_opCode == "BM") {
+		m_numericOperandValue = 10;
+	}
+    else if (m_opCode == "BZ") {
+		m_numericOperandValue = 11;
+	}
+    else if (m_opCode == "BP") {
+		m_numericOperandValue = 12;
+	}
+    else if (m_opCode == "HALT") {
+		m_numericOperandValue = 13;
+	}
+    else {
+		m_numericOperandValue = -1;
+	}
+
+    // If the opCode is not a machine language instruction, then return -1
+    // Report error
+    return m_numericOperandValue;
 }
 
 bool Instruction::IsLabelBlank()
