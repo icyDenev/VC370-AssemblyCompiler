@@ -50,3 +50,51 @@ void Assembler::PassI() {
 		}
 	}
 }
+
+void Assembler::PassII() {
+	m_fileAcc.Rewind();
+
+	int loc = 0; // Tracks the location of the instructions
+
+	// Loop that reads every line and finds the location of each label
+	while (1) {
+		string line; // Read the next line from the source file
+		int contents; // The contents of the line (opcode and operand)
+
+		Instruction::InstructionType st = m_inst.ParseInstruction(line);
+
+		// Check if there are more lines to read
+		// If not, pass II is completed
+		if (!m_fileAcc.GetNextLine(line)) {
+			if (m_inst.GetOpCode() != "END") {
+				// TODO: Report error
+			}
+
+			return;
+		}
+
+		// If the instruction is an END command, then Pass II is completed
+		if (st == Instruction::InstructionType::ST_END) {
+			// TODO: Report error
+			return;
+		}
+
+		// If the instruction is a comment or blank, then we can skip it
+		if (st == Instruction::InstructionType::ST_COMMENT_OR_BLANK)
+			continue;
+
+		if (st == Instruction::InstructionType::ST_MACHINE) {
+			// TODO: Implement the machine code translation
+		}
+
+		if (m_inst.GetOpCode() == "ORG") {
+			loc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
+		}
+		else if (m_inst.GetOpCode() == "DS") {
+			loc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()) - 1);
+		}
+		else {
+			loc = m_inst.NextInstructionLocation(loc);
+		}
+	}
+}
