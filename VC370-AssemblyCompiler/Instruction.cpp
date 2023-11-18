@@ -32,6 +32,14 @@ Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
     return InstructionType::ST_ERROR;
 }
 
+
+/// <summary>
+/// Gets the memory location of the next instruction
+/// </summary>
+/// <param name="a_loc">The current location of the instruction</param>
+/// <returns>The memory location of the next instruction</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/10/2023</date>
 int Instruction::NextInstructionLocation(const int& a_loc)
 {
     return a_loc + 1;
@@ -42,7 +50,7 @@ int Instruction::NextInstructionLocation(const int& a_loc)
 /// </summary>
 /// <returns>Returns the label of the instruction</returns>
 /// <author>Hristo Denev</author>
-/// <date>11/15/2023</date>
+/// <date>11/10/2023</date>
 std::string& Instruction::GetLabel()
 {
     return m_label;
@@ -51,14 +59,20 @@ std::string& Instruction::GetLabel()
 /// <summary>
 /// Returns the opCode of the instruction
 /// </summary>
-/// <returns> Returns the opCode of the instruction </returns>
+/// <returns>Returns the opCode of the instruction</returns>
 /// <author>Hristo Denev</author>
-/// <date>11/15/2023</date>
+/// <date>11/10/2023</date>
 std::string& Instruction::GetOpCode()
 {
     return m_opCode;
 }
 
+/// <summary>
+/// Returns the operand of the instruction
+/// </summary>
+/// <returns>Returns the operand of the instruction</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/10/2023</date>
 std::string& Instruction::GetOperand()
 {
     return m_operand;
@@ -73,6 +87,7 @@ std::string& Instruction::GetOperand()
 /// <date>11/17/2023</date>
 int Instruction::GetNumericOperandValue()
 {
+    // Convert the operand to a numeric value
     if (m_opCode == "ADD") {
         m_numericOperandValue = 1;
     }
@@ -117,10 +132,16 @@ int Instruction::GetNumericOperandValue()
 	}
 
     // If the opCode is not a machine language instruction, then return -1
-    // Report error
+    // TODO: Report error
     return m_numericOperandValue;
 }
 
+/// <summary>
+/// Checks if the instruction's label is blank
+/// </summary>
+/// <returns>Returns true if the instruction doesn't have a label</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/10/2023</date>
 bool Instruction::IsLabelBlank()
 {
     if (m_label.empty())
@@ -129,6 +150,12 @@ bool Instruction::IsLabelBlank()
     return false;
 }
 
+/// <summary>
+/// Checks if the instruction is valid
+/// </summary>
+/// <returns>Returns true if the instruction is valid; false otherwise</returns>
+/// <author>Hristo Denev</author>
+/// <date>NOT IMPLEMENTED YET</date>
 bool Instruction::IsInstructionValid()
 {
     // TODO: Add checks for validity of the instruction
@@ -136,6 +163,13 @@ bool Instruction::IsInstructionValid()
     return false;
 }
 
+/// <summary>
+/// Divides the instruction into label, opCode and operand
+/// </summary>
+/// <param name="a_buff">The current line that is in the buffer</param>
+/// <returns> nothing </returns>
+/// <author>Hristo Denev</author>
+/// <date>11/10/2023</date>
 void Instruction::DivideInstruction(const std::string& a_buff)
 {
     istringstream inst(a_buff);
@@ -157,6 +191,13 @@ void Instruction::DivideInstruction(const std::string& a_buff)
     return;
 }
 
+/// <summary>
+/// Removes the comment from the instruction
+/// </summary>
+/// <param name="a_buff">The current line that is in the buffer</param>
+/// <returns>Nothing</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/17/2023</date>
 std::string Instruction::RemoveComment(const std::string& a_buff)
 {
 	size_t pos = a_buff.find(';');
@@ -167,6 +208,12 @@ std::string Instruction::RemoveComment(const std::string& a_buff)
     return a_buff;
 }
 
+/// <summary>
+/// Checks if the instruction is an assembly instruction
+/// </summary>
+/// <returns>If the instruction is an assembly instruction, then return true; false otherwise</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/10/2023</date>
 bool Instruction::isAssemblyCode()
 {
     if (find(begin(AssemblyLangInstructions), end(AssemblyLangInstructions), m_opCode) != end(AssemblyLangInstructions))
@@ -175,6 +222,12 @@ bool Instruction::isAssemblyCode()
     return false;
 }
 
+/// <summary>
+/// Checks if the instruction is a machine language instruction
+/// </summary>
+/// <returns>If the instruction is a machine language instruction, then return true; false otherwise</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/10/2023</date>
 bool Instruction::isMachineCode()
 {
     if (find(begin(MachineLangInstructions), end(MachineLangInstructions), m_opCode) != end(MachineLangInstructions))
