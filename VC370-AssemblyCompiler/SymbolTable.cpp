@@ -17,9 +17,17 @@ void SymbolTable::AddSymbol(string& a_symbol, int a_loc)
 
 void SymbolTable::DisplaySymbolTable()
 {
+	cout << "Symbol Table:" << endl;
+	cout << "Symbol #    Symbol    Location" << endl;
+	int i = 0;
+
 	for (auto item : m_symbolTable) {
-		cout << item.first << " " << item.second << endl;
+		cout << " " << setw(12) << left << i++ << setw(10) << left << item.first << setw(10) << left << item.second << endl;
 	}
+
+	cout << "____________________________________________\n\n";
+	system("pause");
+	cout << endl;
 }
 
 bool SymbolTable::LookupSymbol(string& a_symbol, int& a_loc)
@@ -29,4 +37,13 @@ bool SymbolTable::LookupSymbol(string& a_symbol, int& a_loc)
 	}
 
 	return false;
+}
+
+int SymbolTable::GetSymbolLocation(string& a_symbol)
+{
+	if (m_symbolTable.find(a_symbol) != m_symbolTable.end() || m_symbolTable[a_symbol] != multiplyDefinedSymbol) {
+		return m_symbolTable[a_symbol];
+	}
+
+	return -1;
 }

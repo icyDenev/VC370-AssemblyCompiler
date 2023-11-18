@@ -15,7 +15,9 @@ Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
     if (a_buff.empty() || a_buff[0] == ';')
         return InstructionType::ST_COMMENT_OR_BLANK;
 
-    DivideInstruction(a_buff);
+    string line = RemoveComment(a_buff);
+
+    DivideInstruction(line);
 
     //TODO: Used boost::to_upper_copy to make the opCode case insensitive
     if (m_opCode == "END")
@@ -153,6 +155,16 @@ void Instruction::DivideInstruction(const std::string& a_buff)
     inst >> m_opCode >> m_operand >> extra;
 
     return;
+}
+
+std::string Instruction::RemoveComment(const std::string& a_buff)
+{
+	size_t pos = a_buff.find(';');
+
+	if (pos != string::npos)
+		return a_buff.substr(0, pos);
+
+    return a_buff;
 }
 
 bool Instruction::isAssemblyCode()
