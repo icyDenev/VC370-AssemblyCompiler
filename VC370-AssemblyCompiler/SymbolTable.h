@@ -23,6 +23,9 @@ public:
     // Lookup a symbol in the symbol table.
     bool LookupSymbol(string& a_symbol, int& a_loc);
 
+    // Get location of symbol in the symbol table.
+    int GetSymbolLocation(string& a_symbol);
+
 private:
 
     // This is the actual symbol table.  The symbol is the key to the map.

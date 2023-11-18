@@ -12,7 +12,8 @@ public:
 		ST_ASSEMBLY,
 		ST_MACHINE,
 		ST_COMMENT_OR_BLANK,
-		ST_END
+		ST_END,
+		ST_ERROR
 	};
 
 	// Parse the instruction into label, opcode, operand and returns
@@ -31,6 +32,9 @@ public:
 	// Returns the operand of the instruction
 	std::string &GetOperand();
 
+	// Returns the numeric value of the operand
+	int GetNumericOperandValue();
+
 	// Returns true if the instruction has a label
 	bool IsLabelBlank();
 	
@@ -39,6 +43,7 @@ public:
 
 private:
 	void DivideInstruction(const std::string& a_buff);
+	std::string RemoveComment(const std::string& a_buff);
 
 	bool isAssemblyCode();
 	bool isMachineCode();
@@ -49,11 +54,10 @@ private:
 
 	std::string m_instruction;
 	InstructionType m_type;
-	bool m_isNumericOperand;
-	bool m_numericOperandValue;
+
+	int m_numericOperandValue;
 
 	string MachineLangInstructions[13] { "ADD", "SUB", "MULT", "DIV", "LOAD", "STORE", "READ", "WRITE", "B", "BM", "BZ", "BP", "HALT" };
 	string AssemblyLangInstructions[4] { "DC", "DS", "ORG", "END" };
-
 };
 
