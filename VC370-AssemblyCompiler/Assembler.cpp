@@ -1,5 +1,6 @@
 #include "Assembler.h"
 #include "stdafx.h"
+#include "Error.h"
 
 Assembler::Assembler(int& argc, char* argv[]) : m_fileAcc(argc, argv) { }
 
@@ -74,8 +75,7 @@ void Assembler::PassII() {
 		// Check if there are more lines to read
 		// If not, pass II is completed
 		if (!m_fileAcc.GetNextLine(line)) {
-			// TODO: Report Error
-
+			Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MISSING_END_STATEMENT, loc));
 
 			cout << "____________________________________________\n\n";
 			system("pause");
@@ -87,7 +87,6 @@ void Assembler::PassII() {
 
 		// If the instruction is an error, then we can skip it
 		if (st == Instruction::InstructionType::ST_ERROR) {
-			// TODO: Report Error
 			m_emul.InsertMemory(loc, -1);
 			continue;
 		}

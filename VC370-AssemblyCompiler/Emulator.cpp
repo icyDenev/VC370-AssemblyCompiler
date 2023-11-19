@@ -5,9 +5,15 @@
 /// <summary>
 /// The default constructor for the Emulator class.
 /// </summary>
+/// <author>Hristo Denev</author>
+/// <date>11/19/2023</date>
 Emulator::Emulator()
 {
-	// TODO: Add your implementation code here.
+	for (int i = 0; i < MEMSZ; i++) {
+		m_memory[i] = 0;
+	}
+	
+	m_accum = 0;
 }
 
 /// <summary>
@@ -17,9 +23,15 @@ Emulator::Emulator()
 /// <param name="a_contents">The contents of the memory</param>
 /// <returns>True if the memory was inserted successfully</returns>
 /// <author>Hristo Denev</author>
-/// <date>11/17/2023</date>
+/// <date>11/19/2023</date>
 bool Emulator::InsertMemory(int a_location, int a_contents)
 {
+	if (a_location > MEMSZ || a_location < 0) {
+		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, a_location));
+
+		return false;
+	}
+
 	m_memory[a_location] = a_contents;
 	
 	return true;
