@@ -75,6 +75,11 @@ void Assembler::PassII() {
 		// If not, pass II is completed
 		if (!m_fileAcc.GetNextLine(line)) {
 			// TODO: Report Error
+
+
+			cout << "____________________________________________\n\n";
+			system("pause");
+			cout << endl;
 			return;
 		}
 
@@ -90,6 +95,10 @@ void Assembler::PassII() {
 		// If the instruction is an END command, then Pass II is completed
 		if (st == Instruction::InstructionType::ST_END) {
 			cout << setw(20) << "" << "     " << line << endl;
+
+			cout << "____________________________________________\n\n";
+			system("pause");
+			cout << endl;
 			return;
 		}
 
