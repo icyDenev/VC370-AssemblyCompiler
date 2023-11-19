@@ -27,7 +27,7 @@ public:
     void DisplaySymbolTable() { m_symTab.DisplaySymbolTable(); }
 
     // Run emulator on the translation.
-    void RunProgramInEmulator() { m_emul.runProgram(); }
+    void RunProgramInEmulator() { m_emul.RunProgram(); }
 
 private:
 
