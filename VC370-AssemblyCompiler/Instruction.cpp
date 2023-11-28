@@ -26,8 +26,6 @@ Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
         return InstructionType::ST_ASSEMBLY;
     if (isMachineCode())
         return InstructionType::ST_MACHINE;
-
-    Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPCODE, 0));
     
     return InstructionType::ST_ERROR;
 }
@@ -83,9 +81,10 @@ std::string& Instruction::GetOperand()
 /// Returns the numeric value of the operand
 /// </summary>
 /// <returns>Returns the numeric value of the operand</returns>
+/// 
 /// <author>Hristo Denev</author>
 /// <date>11/17/2023</date>
-int Instruction::GetNumericOperandValue()
+int Instruction::GetNumericOpCodeValue()
 {
     // Convert the operand to a numeric value
     if (m_opCode == "ADD") {
@@ -131,8 +130,6 @@ int Instruction::GetNumericOperandValue()
 		m_numericOperandValue = -1;
 	}
 
-    // If the opCode is not a machine language instruction, then return -1
-    // TODO: Report error
     return m_numericOperandValue;
 }
 
@@ -150,15 +147,10 @@ bool Instruction::IsLabelBlank()
     return false;
 }
 
-/// <summary>
-/// Checks if the instruction is valid
-/// </summary>
-/// <returns>Returns true if the instruction is valid; false otherwise</returns>
-/// <author>Hristo Denev</author>
-/// <date>NOT IMPLEMENTED YET</date>
-bool Instruction::IsInstructionValid()
+bool Instruction::IsExtraBlank()
 {
-    // TODO: Add checks for validity of the instruction
+    if (m_extra.empty())
+		return true;
 
     return false;
 }
@@ -186,7 +178,8 @@ void Instruction::DivideInstruction(const std::string& a_buff)
         inst >> m_label;
     }
 
-    inst >> m_opCode >> m_operand >> extra;
+    inst >> m_opCode >> m_operand >> m_extra;
+    toUpper(m_opCode);
 
     return;
 }
@@ -206,6 +199,12 @@ std::string Instruction::RemoveComment(const std::string& a_buff)
 		return a_buff.substr(0, pos);
 
     return a_buff;
+}
+
+void Instruction::toUpper(string& a_str)
+{
+    for (int i = 0; i < a_str.length(); i++)
+		a_str[i] = toupper(a_str[i]);
 }
 
 /// <summary>

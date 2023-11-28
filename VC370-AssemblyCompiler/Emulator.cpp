@@ -46,6 +46,14 @@ bool Emulator::InsertMemory(int a_location, int a_contents)
 /// <date>11/17/2023</date>
 string Emulator::GetMemoryContent(int a_location)
 {
+	if (a_location == -1) {
+		return "??????";
+	}
+
+	if (m_memory[a_location] == -1) {
+		return "??????";
+	}
+
 	return to_string(m_memory[a_location] / 100000)
 		+ to_string(m_memory[a_location] / 10000 % 10)
 		+ to_string(m_memory[a_location] / 1000 % 10)

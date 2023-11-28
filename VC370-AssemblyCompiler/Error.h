@@ -23,9 +23,11 @@ public:
         ERR_MISSING_END_STATEMENT,
         ERR_END_STATEMENT_NOT_LAST,
         ERR_CONSTANT_OVERFLOW,
+        ERR_INVALID_OPERAND,
+        ERR_MEMORY_OVERFLOW
     };
 
-    // Structure to hold error information
+    // Structure to hold information
     struct ErrorMsg {
         ErrorCode m_emsg;
         int m_loc;
