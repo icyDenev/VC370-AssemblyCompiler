@@ -39,6 +39,9 @@ void Assembler::PassI() {
 		if (!m_inst.IsLabelBlank()) {
 			m_symTab.AddSymbol(m_inst.GetLabel(), loc);
 		}
+		
+		if (!m_inst.IsOperandNumeric())
+			continue;
 
 		if (m_inst.GetOpCode() == "ORG") {
 			loc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
@@ -58,7 +61,7 @@ void Assembler::PassI() {
 /// </summary>
 /// <returns>nothing</returns>
 /// <author>Hristo Denev</author>
-/// <date>11/15/2023</date>
+/// <date>11/29/2023</date>
 void Assembler::PassII() {
 	m_fileAcc.Rewind();
 	Error::InitErrorReporting();
@@ -100,6 +103,12 @@ void Assembler::PassII() {
 		// If the instruction is an END command, then Pass II is completed
 		if (st == Instruction::InstructionType::ST_END) {
 			cout << setw(20) << "" << "     " << line << endl;
+
+			if (!m_inst.IsOperandBlank()) {
+				m_emul.InsertMemory(loc, -1);
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_EXTRA_ELEMENTS, loc));
+				cout << "Error: Extra elements on line" << endl;
+			}
 
 			cout << "____________________________________________\n\n";
 			system("pause");
@@ -145,9 +154,19 @@ void Assembler::PassII() {
 				continue;
 			}
 			
-			// If the machine instruction is a READ or HALT, then we don't need to check the operand since there is none
+			// If the machine instruction is a HALT, then we don't need to check the operand since there is none
 			// and we can output the instruction accordingly
-			if (m_inst.GetNumericOpCodeValue() == 7 || m_inst.GetNumericOpCodeValue() == 13) {
+			if (m_inst.GetNumericOpCodeValue() == 13) {
+				// If the opcode is a HALT command and the operand is not missing, then there are extra elements
+				// and, therefore, we can record an error and output the instruction accordingly
+				if (!m_inst.IsOperandBlank()) {
+					m_emul.InsertMemory(loc, -1);
+					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_EXTRA_ELEMENTS, loc));
+					cout << "Error: Extra elements on line" << endl;
+					continue;
+				}
+
 				m_emul.InsertMemory(loc, m_inst.GetNumericOpCodeValue() * 10000 + m_symTab.GetSymbolLocation(m_inst.GetOperand()));
 				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 				continue;
@@ -170,34 +189,31 @@ void Assembler::PassII() {
 				cout << "Error: Undefined label" << endl;
 				continue;
 			}
-
-			
 			
 			// If the label and opcode are valid, then we can put it in the memory output the instruction accordingly
 			m_emul.InsertMemory(loc, m_inst.GetNumericOpCodeValue() * 10000 + m_symTab.GetSymbolLocation(m_inst.GetOperand()));
 			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 		}
+
 		// If it is not anything of the above types of instruction, then it is an assembly instruction
 		else
 		{
-			// If the instruction is a assembly instruction and the operand is missing, then we can record an error and output the instruction accordingly
-			if (m_inst.GetOperand() == "") {
+			// If the instruction is a non-end assembly instruction and the operand is missing, then we can record an error and output the instruction accordingly
+			if (m_inst.IsOperandBlank()) {
 				m_emul.InsertMemory(loc, -1);
 				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MISSING_OPERAND, loc));
 				cout << "Error: Missing operand" << endl;
 				continue;
 			}
+
 			// If the instruction is an ORG or DS command
 			// then we have to update the location and output the instruction accordingly
 			if (m_inst.GetOpCode() == "ORG") {
 				int tempLoc;
 
-				try {
-					tempLoc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
-				}
 				// If the operand is not a number, then we can record an error and output the instruction accordingly
-				catch (const std::exception&) {
+				if (!m_inst.IsOperandNumeric()) {
 					loc = tempLoc;
 					m_emul.InsertMemory(loc, -1);
 					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
@@ -205,6 +221,8 @@ void Assembler::PassII() {
 					cout << "Error: Invalid operand" << endl;
 					continue;
 				}
+
+				tempLoc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
 
 				// If the location is not within the limit, then we can record an error and output the instruction accordingly
 				if (tempLoc >= 10000 || tempLoc < 0) {
@@ -220,20 +238,19 @@ void Assembler::PassII() {
 				
 				continue;
 			}
-			else if (m_inst.GetOpCode() == "DS") {
+			if (m_inst.GetOpCode() == "DS") {
 				int tempLoc;
 				
-				try {
-					tempLoc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()) - 1);
-				}
 				// If the operand is not a number, then we can record an error and output the instruction accordingly
-				catch (const std::exception&) {
+				if (!m_inst.IsOperandNumeric()) {
 					m_emul.InsertMemory(loc, -1);
 					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
 					cout << "Error: Invalid operand" << endl;
 					continue;
 				}
+
+				tempLoc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()) - 1);
 
 				// If the location is not within the limit, then we can record an error and output the instruction accordingly
 				if (tempLoc >= 10000 || tempLoc < 0) {
@@ -249,32 +266,30 @@ void Assembler::PassII() {
 				
 				continue;
 			}
+
 			// If the Assembly Instruction is not an ORG, DS or END command, then it is the DC command
 			// We don't need to odify the location in a special way, but we need to output the instruction accordingly
-			else {
-				try {
-					m_emul.InsertMemory(loc, 00 + stoi(m_inst.GetOperand()));
-				}
-				// If the operand is not a number, then we can record an error and output the instruction accordingly
-				catch (const std::exception&) {
-					m_emul.InsertMemory(loc, -1);
-					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
-					cout << "Error: Invalid operand" << endl;
-					continue;
-				}
-
-				// If the operand is not a number within the limit, then we can record an error and output the instruction accordingly
-				if (stoi(m_inst.GetOperand()) >= 10000 || stoi(m_inst.GetOperand()) < 0) {
-					m_emul.InsertMemory(loc, -1);
-					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, loc));
-					cout << "Error: Operand overflow" << endl;
-					continue;
-				}
-				
+			
+			// If the operand is not a number, then we can record an error and output the instruction accordingly
+			if (!m_inst.IsOperandNumeric()) {
+				m_emul.InsertMemory(loc, -1);
 				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
+				cout << "Error: Invalid operand" << endl;
+				continue;
 			}
+
+			// If the operand is not a number within the limit, then we can record an error and output the instruction accordingly
+			if (stoi(m_inst.GetOperand()) >= 10000 || stoi(m_inst.GetOperand()) < 0) {
+				m_emul.InsertMemory(loc, -1);
+				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, loc));
+				cout << "Error: Operand overflow" << endl;
+				continue;
+			}
+
+			m_emul.InsertMemory(loc, 00 + stoi(m_inst.GetOperand()));
+			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 		}
 		
 		// If the instruction is not an ORG or DS command, then we can update the location by going to loc + 1

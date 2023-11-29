@@ -147,12 +147,49 @@ bool Instruction::IsLabelBlank()
     return false;
 }
 
+/// <summary>
+/// Returns true if the instruction's extra field is blank
+/// </summary>
+/// <returns> Returns true if the instruction's extra field is blank</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/28/2023</date>
 bool Instruction::IsExtraBlank()
 {
     if (m_extra.empty())
 		return true;
 
     return false;
+}
+
+/// <summary>
+/// Returns true if the instruction's operand is blank
+/// </summary>
+/// <returns> Returns true if the instruction's operand is blank</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/28/2023</date>
+bool Instruction::IsOperandBlank()
+{
+    if (m_operand.empty())
+        return true;
+
+    return false;
+}
+
+/// <summary>
+/// Returns true if the instruction's operand is numeric
+/// </summary>
+/// <returns> Returns true if the instruction's operand is numeric</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/29/2023</date>
+bool Instruction::IsOperandNumeric()
+{
+    for (int i = 0; i < m_operand.length(); i++)
+	{
+		if (!isdigit(m_operand[i]))
+			return false;
+	}
+
+    return true;
 }
 
 /// <summary>
@@ -166,7 +203,7 @@ void Instruction::DivideInstruction(const std::string& a_buff)
 {
     istringstream inst(a_buff);
 
-    m_label = m_opCode = m_operand = "";
+    m_extra = m_label = m_opCode = m_operand = "";
     
     if (a_buff.empty())
         return;

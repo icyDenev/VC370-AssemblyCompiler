@@ -41,6 +41,12 @@ public:
 	// Returns true if the instruction has extra elements
 	bool IsExtraBlank();
 
+	// Returns true if the instruction has an operand
+	bool IsOperandBlank();
+
+	// Returns true if the operand is numeric
+	bool IsOperandNumeric();
+
 private:
 	void DivideInstruction(const std::string& a_buff);
 	std::string RemoveComment(const std::string& a_buff);
