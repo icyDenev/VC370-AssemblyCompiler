@@ -11,11 +11,11 @@
 /// <date>11/15/2023</date>
 Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
 {
-    // Identify the type of the instruction
-    if (a_buff.empty() || a_buff[0] == ';')
-        return InstructionType::ST_COMMENT_OR_BLANK;
-
     string line = RemoveComment(a_buff);
+
+    // If after the comments are removed, the line is empty, then line is not an instruction of any kind
+    if (line.find_first_not_of(" \t\n\r\f\v") == string::npos)
+        return InstructionType::ST_COMMENT_OR_BLANK;
 
     DivideInstruction(line);
 
@@ -26,7 +26,7 @@ Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
         return InstructionType::ST_ASSEMBLY;
     if (isMachineCode())
         return InstructionType::ST_MACHINE;
-    
+
     return InstructionType::ST_ERROR;
 }
 
@@ -94,41 +94,41 @@ int Instruction::GetNumericOpCodeValue()
         m_numericOperandValue = 2;
     }
     else if (m_opCode == "MULT") {
-		m_numericOperandValue = 3;
-	}
+        m_numericOperandValue = 3;
+    }
     else if (m_opCode == "DIV") {
-		m_numericOperandValue = 4;
-	}
+        m_numericOperandValue = 4;
+    }
     else if (m_opCode == "LOAD") {
-		m_numericOperandValue = 5;
-	}
+        m_numericOperandValue = 5;
+    }
     else if (m_opCode == "STORE") {
-		m_numericOperandValue = 6;
-	}
+        m_numericOperandValue = 6;
+    }
     else if (m_opCode == "READ") {
-		m_numericOperandValue = 7;
-	}
+        m_numericOperandValue = 7;
+    }
     else if (m_opCode == "WRITE") {
-		m_numericOperandValue = 8;
-	}
+        m_numericOperandValue = 8;
+    }
     else if (m_opCode == "B") {
-		m_numericOperandValue = 9;
-	}
+        m_numericOperandValue = 9;
+    }
     else if (m_opCode == "BM") {
-		m_numericOperandValue = 10;
-	}
+        m_numericOperandValue = 10;
+    }
     else if (m_opCode == "BZ") {
-		m_numericOperandValue = 11;
-	}
+        m_numericOperandValue = 11;
+    }
     else if (m_opCode == "BP") {
-		m_numericOperandValue = 12;
-	}
+        m_numericOperandValue = 12;
+    }
     else if (m_opCode == "HALT") {
-		m_numericOperandValue = 13;
-	}
+        m_numericOperandValue = 13;
+    }
     else {
-		m_numericOperandValue = -1;
-	}
+        m_numericOperandValue = -1;
+    }
 
     return m_numericOperandValue;
 }
@@ -142,7 +142,7 @@ int Instruction::GetNumericOpCodeValue()
 bool Instruction::IsLabelBlank()
 {
     if (m_label.empty())
-		return true;
+        return true;
 
     return false;
 }
@@ -156,7 +156,7 @@ bool Instruction::IsLabelBlank()
 bool Instruction::IsExtraBlank()
 {
     if (m_extra.empty())
-		return true;
+        return true;
 
     return false;
 }
@@ -184,10 +184,10 @@ bool Instruction::IsOperandBlank()
 bool Instruction::IsOperandNumeric()
 {
     for (int i = 0; i < m_operand.length(); i++)
-	{
-		if (!isdigit(m_operand[i]))
-			return false;
-	}
+    {
+        if (!isdigit(m_operand[i]))
+            return false;
+    }
 
     return true;
 }
@@ -204,7 +204,7 @@ void Instruction::DivideInstruction(const std::string& a_buff)
     istringstream inst(a_buff);
 
     m_extra = m_label = m_opCode = m_operand = "";
-    
+
     if (a_buff.empty())
         return;
 
@@ -230,10 +230,10 @@ void Instruction::DivideInstruction(const std::string& a_buff)
 /// <date>11/17/2023</date>
 std::string Instruction::RemoveComment(const std::string& a_buff)
 {
-	size_t pos = a_buff.find(';');
+    size_t pos = a_buff.find(';');
 
-	if (pos != string::npos)
-		return a_buff.substr(0, pos);
+    if (pos != string::npos)
+        return a_buff.substr(0, pos);
 
     return a_buff;
 }
@@ -241,7 +241,7 @@ std::string Instruction::RemoveComment(const std::string& a_buff)
 void Instruction::toUpper(string& a_str)
 {
     for (int i = 0; i < a_str.length(); i++)
-		a_str[i] = toupper(a_str[i]);
+        a_str[i] = toupper(a_str[i]);
 }
 
 /// <summary>
@@ -267,7 +267,7 @@ bool Instruction::isAssemblyCode()
 bool Instruction::isMachineCode()
 {
     if (find(begin(MachineLangInstructions), end(MachineLangInstructions), m_opCode) != end(MachineLangInstructions))
-		return true;
+        return true;
 
     return false;
 }
