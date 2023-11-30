@@ -21,7 +21,7 @@ public:
     void DisplaySymbolTable();
 
     // Lookup a symbol in the symbol table.
-    bool LookupSymbol(string& a_symbol, int& a_loc);
+    bool LookupSymbol(string& a_symbol);
 
     // Get location of symbol in the symbol table.
     int GetSymbolLocation(string& a_symbol);

@@ -32,18 +32,25 @@ public:
 	// Returns the operand of the instruction
 	std::string &GetOperand();
 
-	// Returns the numeric value of the operand
-	int GetNumericOperandValue();
+	// Returns the numeric value of the operation code
+	int GetNumericOpCodeValue();
 
 	// Returns true if the instruction has a label
 	bool IsLabelBlank();
-	
-	// Checks if the instruction is valid
-	bool IsInstructionValid();
+
+	// Returns true if the instruction has extra elements
+	bool IsExtraBlank();
+
+	// Returns true if the instruction has an operand
+	bool IsOperandBlank();
+
+	// Returns true if the operand is numeric
+	bool IsOperandNumeric();
 
 private:
 	void DivideInstruction(const std::string& a_buff);
 	std::string RemoveComment(const std::string& a_buff);
+	void toUpper(std::string &a_str);
 
 	bool isAssemblyCode();
 	bool isMachineCode();
@@ -51,6 +58,7 @@ private:
 	std::string m_label;
 	std::string m_opCode;
 	std::string m_operand;
+	std::string m_extra;
 
 	std::string m_instruction;
 	InstructionType m_type;

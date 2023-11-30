@@ -52,9 +52,9 @@ void SymbolTable::DisplaySymbolTable()
 /// <returns>True if the symbol is found, false otherwise</returns>
 /// <author>Hristo Denev</author>
 /// <date>11/17/2023</date>
-bool SymbolTable::LookupSymbol(string& a_symbol, int& a_loc)
+bool SymbolTable::LookupSymbol(string& a_symbol)
 {
-	if (m_symbolTable[a_symbol] == a_loc && m_symbolTable.find(a_symbol) != m_symbolTable.end()) {
+	if (m_symbolTable[a_symbol] != multiplyDefinedSymbol && m_symbolTable.find(a_symbol) != m_symbolTable.end()) {
 		return true;
 	}
 
