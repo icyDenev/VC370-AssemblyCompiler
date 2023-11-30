@@ -74,7 +74,7 @@ bool Emulator::RunProgram()
 	if (Error::WasThereErrors()) {
 		Error::DisplayErrors();
 
-		return false;
+		exit(-1);
 	}
 
 	int loc = 100;

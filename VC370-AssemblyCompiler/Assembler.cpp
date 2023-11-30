@@ -40,8 +40,12 @@ void Assembler::PassI() {
 			m_symTab.AddSymbol(m_inst.GetLabel(), loc);
 		}
 		
-		if (!m_inst.IsOperandNumeric())
+		// If operand is not numeric or is missing, then these is an error and we can skip it
+		if (!m_inst.IsOperandNumeric() || m_inst.IsOperandBlank())
+		{
+			loc = m_inst.NextInstructionLocation(loc);
 			continue;
+		}
 
 		if (m_inst.GetOpCode() == "ORG") {
 			loc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
@@ -76,6 +80,7 @@ void Assembler::PassII() {
 		string line; // Read the next line from the source file
 		int contents; // The contents of the line (opcode and operand)
 
+		#pragma region NextLine
 		// Check if there are more lines to read
 		// If not, pass II is completed
 		if (!m_fileAcc.GetNextLine(line)) {
@@ -88,9 +93,11 @@ void Assembler::PassII() {
 			cout << endl;
 			return;
 		}
+		#pragma endregion
 
 		Instruction::InstructionType st = m_inst.ParseInstruction(line);
-
+		
+		#pragma region NonMachineOrAssemblyInstruction
 		// If the instruction is an error, then we can skip it
 		if (st == Instruction::InstructionType::ST_ERROR) {
 			m_emul.InsertMemory(loc, -1);
@@ -121,6 +128,7 @@ void Assembler::PassII() {
 			cout << setw(20) << "" << "     " << line << endl;
 			continue;
 		}
+		#pragma endregion
 
 		// If the instruction has a label, then we need to check if it is a duplicate label
 		if (!m_inst.IsLabelBlank()) {
@@ -143,6 +151,8 @@ void Assembler::PassII() {
 			continue;
 		}
 
+		// If the instruction is a machine instruction, then we need to process it accordingly
+		#pragma region MachineInstruction
 		// If the instruction is a machine instruction, then we can output the instruction accordingly
 		if (st == Instruction::InstructionType::ST_MACHINE) {
 			// If the opcode is invalid, then we can record an error and output the instruction accordingly
@@ -153,9 +163,8 @@ void Assembler::PassII() {
 				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPCODE, loc));
 				continue;
 			}
-			
+
 			// If the machine instruction is a HALT, then we don't need to check the operand since there is none
-			// and we can output the instruction accordingly
 			if (m_inst.GetNumericOpCodeValue() == 13) {
 				// If the opcode is a HALT command and the operand is not missing, then there are extra elements
 				// and, therefore, we can record an error and output the instruction accordingly
@@ -166,38 +175,46 @@ void Assembler::PassII() {
 					cout << "Error: Extra elements on line" << endl;
 					continue;
 				}
+			}
+			// If the machine instruction is not a HALT command, then we need to check the operand
+			else {
+				// If the there are no operands, then we can record an error and output the instruction accordingly
+				if (m_inst.IsOperandBlank()) {
+					m_emul.InsertMemory(loc, -1);
+					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MISSING_OPERAND, loc));
+					cout << "Error: Missing operand" << endl;
+					continue;
+				}
 
-				m_emul.InsertMemory(loc, m_inst.GetNumericOpCodeValue() * 10000 + m_symTab.GetSymbolLocation(m_inst.GetOperand()));
-				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-				continue;
+				// If the label is not valid, then we can record an error and output the instruction accordingly
+				if (!isalpha(m_inst.GetOperand()[0])) {
+					m_emul.InsertMemory(loc, -1);
+					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
+					cout << "Error: Invalid operand" << endl;
+					continue;
+				}
+
+				// If the label is not defined, then we can record an error and output the instruction accordingly
+				if (!m_symTab.GetSymbolLocation(m_inst.GetOperand())) {
+					m_emul.InsertMemory(loc, -1);
+					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_UNDEFINED_LABEL, loc));
+					cout << "Error: Undefined label" << endl;
+					continue;
+				}
 			}
-			
-			// If the label is not valid, then we can record an error and output the instruction accordingly
-			if (!isalpha(m_inst.GetOperand()[0])) {
-				m_emul.InsertMemory(loc, -1);
-				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
-				cout << "Error: Invalid operand" << endl;
-				continue;
-			}
-			
-			// If the label is not defined, then we can record an error and output the instruction accordingly
-			if (!m_symTab.GetSymbolLocation(m_inst.GetOperand())) {
-				m_emul.InsertMemory(loc, -1);
-				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_UNDEFINED_LABEL, loc));
-				cout << "Error: Undefined label" << endl;
-				continue;
-			}
-			
+
 			// If the label and opcode are valid, then we can put it in the memory output the instruction accordingly
 			m_emul.InsertMemory(loc, m_inst.GetNumericOpCodeValue() * 10000 + m_symTab.GetSymbolLocation(m_inst.GetOperand()));
 			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 		}
+		#pragma endregion
 
 		// If it is not anything of the above types of instruction, then it is an assembly instruction
-		else
-		{
+		#pragma region AssemblyInstruction
+		else {
 			// If the instruction is a non-end assembly instruction and the operand is missing, then we can record an error and output the instruction accordingly
 			if (m_inst.IsOperandBlank()) {
 				m_emul.InsertMemory(loc, -1);
@@ -214,9 +231,7 @@ void Assembler::PassII() {
 
 				// If the operand is not a number, then we can record an error and output the instruction accordingly
 				if (!m_inst.IsOperandNumeric()) {
-					loc = tempLoc;
-					m_emul.InsertMemory(loc, -1);
-					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+					cout << setw(10) << "????" << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
 					cout << "Error: Invalid operand" << endl;
 					continue;
@@ -232,15 +247,15 @@ void Assembler::PassII() {
 					continue;
 				}
 
+				cout << setw(10) << loc << setw(15) << "" << line << endl; // Output the location and the instruction				
+
 				loc = tempLoc;
 
-				cout << setw(10) << loc << setw(15) << "" << line << endl; // Output the location and the instruction				
-				
 				continue;
 			}
 			if (m_inst.GetOpCode() == "DS") {
 				int tempLoc;
-				
+
 				// If the operand is not a number, then we can record an error and output the instruction accordingly
 				if (!m_inst.IsOperandNumeric()) {
 					m_emul.InsertMemory(loc, -1);
@@ -260,16 +275,16 @@ void Assembler::PassII() {
 					continue;
 				}
 
-				loc = tempLoc;
-				
+
 				cout << setw(10) << loc << setw(15) << "" << line << endl; // Output the location and the instruction
-				
+				loc = tempLoc;
+
 				continue;
 			}
 
 			// If the Assembly Instruction is not an ORG, DS or END command, then it is the DC command
 			// We don't need to odify the location in a special way, but we need to output the instruction accordingly
-			
+
 			// If the operand is not a number, then we can record an error and output the instruction accordingly
 			if (!m_inst.IsOperandNumeric()) {
 				m_emul.InsertMemory(loc, -1);
@@ -291,8 +306,9 @@ void Assembler::PassII() {
 			m_emul.InsertMemory(loc, 00 + stoi(m_inst.GetOperand()));
 			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 		}
+		#pragma endregion
 		
-		// If the instruction is not an ORG or DS command, then we can update the location by going to loc + 1
+		// We move to the next location in the memory
 		loc = m_inst.NextInstructionLocation(loc);
 	}
 }

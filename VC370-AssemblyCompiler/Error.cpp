@@ -87,6 +87,9 @@ void Error::DisplayErrors()
 			case ErrorCode::ERR_INVALID_OPERAND:
 				cout << "Invalid operand" << endl;
 				break;
+			case ErrorCode::ERR_MEMORY_OVERFLOW:
+				cout << "Memory overflow" << endl;
+				break;
 			default:
 				break;
 		}
