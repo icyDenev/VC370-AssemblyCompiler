@@ -8,7 +8,7 @@
 /// <param name="a_buff">The current line that is in the buffer</param>
 /// <returns>Returns the instruction type</returns>
 /// <author>Hristo Denev</author>
-/// <date>11/15/2023</date>
+/// <date>11/30/2023</date>
 Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
 {
     string line = RemoveComment(a_buff);
