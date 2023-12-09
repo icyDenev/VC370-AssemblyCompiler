@@ -71,7 +71,13 @@ void Assembler::PassII() {
 	Error::InitErrorReporting();
 
 	int loc = 0; // Tracks the location of the instructions
+	int currOpCode = 0; // Tracks the current opcode
+	int currOperand = 0; // Tracks the current operand
+	int tempLoc = -1; // Tracks the temporary location in case of ORG or DS commands
 
+	vector<string> currErrors; // Tracks the current errors
+	
+	bool machineCodeFinishedFl = false; // Tracks if there we have received a HALT command (therefore, the machine code is finished)
 	cout << "Translation of Program:" << endl;
 	cout << "Location  Contents       Original Statement" << endl;
 
@@ -84,10 +90,8 @@ void Assembler::PassII() {
 		// Check if there are more lines to read
 		// If not, pass II is completed
 		if (!m_fileAcc.GetNextLine(line)) {
-			m_emul.InsertMemory(loc, -1);
 			Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MISSING_END_STATEMENT, loc));
 			cout << "Error: Missing END statement" << endl;
-
 			cout << "____________________________________________\n\n";
 			system("pause");
 			cout << endl;
@@ -97,14 +101,19 @@ void Assembler::PassII() {
 
 		Instruction::InstructionType st = m_inst.ParseInstruction(line);
 		
+		// Reset the variables
+		currOpCode = 0;
+		currOperand = 0;
+		currErrors.clear();
+		tempLoc = -1;
+
 		#pragma region NonMachineOrAssemblyInstruction
 		// If the instruction is an error, then we can skip it
 		if (st == Instruction::InstructionType::ST_ERROR) {
-			m_emul.InsertMemory(loc, -1);
-			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-			cout << "Error: Syntax error" << endl;
+			currOpCode = -1;
+			currOperand = -1;
 			Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_SYNTAX_ERROR, loc));
-			continue;
+			currErrors.push_back("Error: Syntax error");
 		}
 
 		// If the instruction is an END command, then Pass II is completed
@@ -112,9 +121,20 @@ void Assembler::PassII() {
 			cout << setw(20) << "" << "     " << line << endl;
 
 			if (!m_inst.IsOperandBlank()) {
-				m_emul.InsertMemory(loc, -1);
+				currOpCode = -1;
+				currOperand = -1;
+				m_emul.InsertMemory(loc, currOpCode, currOperand);
 				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_EXTRA_ELEMENTS, loc));
-				cout << "Error: Extra elements on line" << endl;
+				currErrors.push_back("Error: Extra elements on line");
+			}
+
+			if (m_fileAcc.GetNextLine(line)) {
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_END_STATEMENT_NOT_LAST, loc));
+				currErrors.push_back("Error: END statement not last");
+			}
+
+			for (auto error : currErrors) {
+				cout << error << endl;
 			}
 
 			cout << "____________________________________________\n\n";
@@ -130,185 +150,179 @@ void Assembler::PassII() {
 		}
 		#pragma endregion
 
+		// Checks that need to be done no matter if the instruction is a machine or assembly instruction
+		#pragma region ChecksForBothMachineAndAssemblyCode
 		// If the instruction has a label, then we need to check if it is a duplicate label
 		if (!m_inst.IsLabelBlank()) {
-			// If the label is a duplicate, then we can record an error and output the instruction accordingly
+			// If the label is a duplicate, then we can record an error
 			if (!m_symTab.LookupSymbol(m_inst.GetLabel())) {
-				m_emul.InsertMemory(loc, -1);
-				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_DUPLICATE_LABEL, loc));
-				cout << "Error: Duplicate label" << endl;
-				continue;
+				currErrors.push_back("Error: Duplicate label");
 			}
 		}
 
-		// If the instruction has extra elements, then we can record an error and output the instruction accordingly
+		// If the instruction has extra elements, then we can record an error
 		if (!m_inst.IsExtraBlank()) {
-			m_emul.InsertMemory(loc, -1);
-			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 			Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_EXTRA_ELEMENTS, loc));
-			cout << "Error: Extra elements on line" << endl;
-			continue;
+			currErrors.push_back("Error: Extra elements on line");
 		}
+		#pragma endregion
 
 		// If the instruction is a machine instruction, then we need to process it accordingly
 		#pragma region MachineInstruction
 		// If the instruction is a machine instruction, then we can output the instruction accordingly
 		if (st == Instruction::InstructionType::ST_MACHINE) {
-			// If the opcode is invalid, then we can record an error and output the instruction accordingly
+			// If there is a machine instruction after HALT command, then we can record an error
+			if (machineCodeFinishedFl) {
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MACHINE_CODE_AFTER_HALT, loc));
+				currErrors.push_back("Error: Machine Code After Halt");
+			}
+
+			// If the opcode is invalid, then we can record an error
 			if (m_inst.GetNumericOpCodeValue() == -1) {
-				m_emul.InsertMemory(loc, -1);
-				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-				cout << "Error: Invalid opcode" << endl;
+				currOpCode = -1;
 				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPCODE, loc));
-				continue;
+				currErrors.push_back("Error: Invalid opcode");
+			}
+
+			else {
+				currOpCode = m_inst.GetNumericOpCodeValue();
 			}
 
 			// If the machine instruction is a HALT, then we don't need to check the operand since there is none
 			if (m_inst.GetNumericOpCodeValue() == 13) {
 				// If the opcode is a HALT command and the operand is not missing, then there are extra elements
-				// and, therefore, we can record an error and output the instruction accordingly
+				// and, therefore, we can record an error
 				if (!m_inst.IsOperandBlank()) {
-					m_emul.InsertMemory(loc, -1);
-					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+					currOperand = -1;
 					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_EXTRA_ELEMENTS, loc));
-					cout << "Error: Extra elements on line" << endl;
+					currErrors.push_back("Error: Extra elements on line");
 					continue;
 				}
+
+				// We can set the machineCodeFinishedFl to true since we have received a HALT command
+				machineCodeFinishedFl = true;
 			}
 			// If the machine instruction is not a HALT command, then we need to check the operand
 			else {
-				// If the there are no operands, then we can record an error and output the instruction accordingly
+				// If the there are no operands, then we can record an error
 				if (m_inst.IsOperandBlank()) {
-					m_emul.InsertMemory(loc, -1);
-					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+					currOperand = -1;
 					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MISSING_OPERAND, loc));
-					cout << "Error: Missing operand" << endl;
-					continue;
+					currErrors.push_back("Error: Missing operand");
 				}
 
-				// If the label is not valid, then we can record an error and output the instruction accordingly
-				if (!isalpha(m_inst.GetOperand()[0])) {
-					m_emul.InsertMemory(loc, -1);
-					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+				// If the label is not valid, then we can record an error
+				else if (!isalpha(m_inst.GetOperand()[0])) {
+					currOperand = -1;
 					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
-					cout << "Error: Invalid operand" << endl;
-					continue;
+					currErrors.push_back("Error: Invalid operand");
 				}
 
-				// If the label is not defined, then we can record an error and output the instruction accordingly
-				if (!m_symTab.GetSymbolLocation(m_inst.GetOperand())) {
-					m_emul.InsertMemory(loc, -1);
-					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+				// If the label is not defined, then we can record an error
+				else if (!m_symTab.GetSymbolLocation(m_inst.GetOperand())) {
+					currOperand = -1;
 					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_UNDEFINED_LABEL, loc));
-					cout << "Error: Undefined label" << endl;
-					continue;
+					currErrors.push_back("Error: Undefined label");
+				}
+
+				else if (m_symTab.GetSymbolLocation(m_inst.GetOperand()) == m_symTab.multiplyDefinedSymbol) {
+					currOperand = -1;
+					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_DUPLICATE_LABEL, loc));
+					currErrors.push_back("Error: Duplicate label");
+				}
+
+				// If the operand is valid, we can put it in currOperand
+				else {
+					currOperand = m_symTab.GetSymbolLocation(m_inst.GetOperand());
 				}
 			}
-
-			// If the label and opcode are valid, then we can put it in the memory output the instruction accordingly
-			m_emul.InsertMemory(loc, m_inst.GetNumericOpCodeValue() * 10000 + m_symTab.GetSymbolLocation(m_inst.GetOperand()));
-			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 		}
 		#pragma endregion
 
 		// If it is not anything of the above types of instruction, then it is an assembly instruction
 		#pragma region AssemblyInstruction
-		else {
-			// If the instruction is a non-end assembly instruction and the operand is missing, then we can record an error and output the instruction accordingly
+		else if (st == Instruction::InstructionType::ST_ASSEMBLY) {
+			
+			if (!machineCodeFinishedFl && m_inst.GetOpCode() != "ORG") {
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_ASSEMBLY_CODE_BEFORE_HALT, loc));
+				currErrors.push_back("Error: Missing HALT statement. The Assembly Instruction is not allowed");
+			}
+
+			// If the instruction is a non-end assembly instruction and the operand is missing, then we can record an error
 			if (m_inst.IsOperandBlank()) {
-				m_emul.InsertMemory(loc, -1);
-				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+				currOperand = -1;
 				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MISSING_OPERAND, loc));
-				cout << "Error: Missing operand" << endl;
-				continue;
+				currErrors.push_back("Error: Missing operand");
+			}
+
+			// If the operand is not a number, then we can record an error
+			else if (!m_inst.IsOperandNumeric()) {
+				currOperand = -1;
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
+				currErrors.push_back("Error: Invalid operand");
+			}
+
+			// If the operand is not a number within the limit, then we can record an error
+			else if (stoi(m_inst.GetOperand()) >= 1000000 || stoi(m_inst.GetOperand()) < 0) {
+				currOperand = -1;
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, loc));
+				currErrors.push_back("Error: Operand overflow");
+			}
+
+			// If the operand is valid, we can put it in currOperand
+			else {
+				currOpCode = stoi(m_inst.GetOperand()) / 10000;		// If the operand is a number bigger than 10000, then we put the first two digits in currOpCode
+				currOperand = stoi(m_inst.GetOperand()) % 10000;	// If the operand is a number bigger than 10000, then we put the last four digits in currOperand
 			}
 
 			// If the instruction is an ORG or DS command
 			// then we have to update the location and output the instruction accordingly
-			if (m_inst.GetOpCode() == "ORG") {
-				int tempLoc;
+			if (m_inst.GetOpCode() == "ORG" || m_inst.GetOpCode() == "DS") {
+				tempLoc = stoi(m_inst.GetOperand());
 
-				// If the operand is not a number, then we can record an error and output the instruction accordingly
-				if (!m_inst.IsOperandNumeric()) {
-					cout << setw(10) << "????" << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
-					cout << "Error: Invalid operand" << endl;
-					continue;
+				if (m_inst.GetOpCode() == "DS") {
+					tempLoc += loc;
 				}
 
-				tempLoc = m_inst.NextInstructionLocation(stoi(m_inst.GetOperand()) - 1);
-
-				// If the location is not within the limit, then we can record an error and output the instruction accordingly
+				// If the location is not within the limit, then we can record an error
 				if (tempLoc >= 10000 || tempLoc < 0) {
-					cout << setw(10) << "????" << setw(10) << m_emul.GetMemoryContent(-1) << "     " << line << endl;
+					currOpCode = -1;
+					currOperand = -1;
+					tempLoc = loc + 1; // We move to the next location in the memory
 					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MEMORY_OVERFLOW, loc));
-					cout << "Error: Memory overflow" << endl;
-					continue;
+					currErrors.push_back("Error: Memory overflow");
 				}
-
-				cout << setw(10) << loc << setw(15) << "" << line << endl; // Output the location and the instruction				
-
-				loc = tempLoc;
-
-				continue;
 			}
-			if (m_inst.GetOpCode() == "DS") {
-				int tempLoc;
-
-				// If the operand is not a number, then we can record an error and output the instruction accordingly
-				if (!m_inst.IsOperandNumeric()) {
-					m_emul.InsertMemory(loc, -1);
-					cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
-					cout << "Error: Invalid operand" << endl;
-					continue;
-				}
-
-				tempLoc = m_inst.NextInstructionLocation(loc + stoi(m_inst.GetOperand()) - 1);
-
-				// If the location is not within the limit, then we can record an error and output the instruction accordingly
-				if (tempLoc >= 10000 || tempLoc < 0) {
-					cout << setw(10) << "????" << setw(10) << m_emul.GetMemoryContent(-1) << "     " << line << endl;
-					Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MEMORY_OVERFLOW, loc));
-					cout << "Error: Memory overflow" << endl;
-					continue;
-				}
-
-
-				cout << setw(10) << loc << setw(15) << "" << line << endl; // Output the location and the instruction
-				loc = tempLoc;
-
-				continue;
-			}
-
-			// If the Assembly Instruction is not an ORG, DS or END command, then it is the DC command
-			// We don't need to odify the location in a special way, but we need to output the instruction accordingly
-
-			// If the operand is not a number, then we can record an error and output the instruction accordingly
-			if (!m_inst.IsOperandNumeric()) {
-				m_emul.InsertMemory(loc, -1);
-				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_INVALID_OPERAND, loc));
-				cout << "Error: Invalid operand" << endl;
-				continue;
-			}
-
-			// If the operand is not a number within the limit, then we can record an error and output the instruction accordingly
-			if (stoi(m_inst.GetOperand()) >= 10000 || stoi(m_inst.GetOperand()) < 0) {
-				m_emul.InsertMemory(loc, -1);
-				cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
-				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, loc));
-				cout << "Error: Operand overflow" << endl;
-				continue;
-			}
-
-			m_emul.InsertMemory(loc, 00 + stoi(m_inst.GetOperand()));
-			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
 		}
 		#pragma endregion
+
+		#pragma region Output
+		if (tempLoc == -1) {
+			m_emul.InsertMemory(loc, currOpCode, currOperand);
+			cout << setw(10) << loc << setw(10) << m_emul.GetMemoryContent(loc) << "     " << line << endl;
+
+			// We move to the next location in the memory
+			loc = m_inst.NextInstructionLocation(loc);
+
+			// If the location is not within the limit, then we can record an error
+			if (loc >= 10000) {
+				loc %= 10000;
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MEMORY_OVERFLOW, loc));
+				currErrors.push_back("Error: Memory overflow");
+			}
+		}
+		else {
+			cout << setw(10) << loc << setw(15) << "" << line << endl; // Output the location and the instruction				
+
+			loc = tempLoc % 10000; // We move to the location in the memory that was stored in tempLoc
+		}
 		
-		// We move to the next location in the memory
-		loc = m_inst.NextInstructionLocation(loc);
+		// Output the errors if there are any
+		for (auto error : currErrors) {
+			cout << error << endl;
+		}
+		
+		#pragma endregion
 	}
 }

@@ -24,7 +24,9 @@ public:
         ERR_END_STATEMENT_NOT_LAST,
         ERR_CONSTANT_OVERFLOW,
         ERR_INVALID_OPERAND,
-        ERR_MEMORY_OVERFLOW
+        ERR_MEMORY_OVERFLOW,
+        ERR_MACHINE_CODE_AFTER_HALT,
+        ERR_ASSEMBLY_CODE_BEFORE_HALT
     };
 
     // Structure to hold information

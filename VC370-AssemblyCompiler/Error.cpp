@@ -90,6 +90,12 @@ void Error::DisplayErrors()
 			case ErrorCode::ERR_MEMORY_OVERFLOW:
 				cout << "Memory overflow" << endl;
 				break;
+			case ErrorCode::ERR_MACHINE_CODE_AFTER_HALT:
+				cout << "Machine code after HALT" << endl;
+				break;
+			case ErrorCode::ERR_ASSEMBLY_CODE_BEFORE_HALT:
+				cout << "Assembly code before HALT" << endl;
+				break;
 			default:
 				break;
 		}

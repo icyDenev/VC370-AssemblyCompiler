@@ -5,7 +5,6 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <iostream>
-#include <stdlib.h>
 #include <string>
 #include <windows.h>
 #include <map>

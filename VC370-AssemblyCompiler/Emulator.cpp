@@ -24,7 +24,7 @@ Emulator::Emulator()
 /// <returns>True if the memory was inserted successfully</returns>
 /// <author>Hristo Denev</author>
 /// <date>11/19/2023</date>
-bool Emulator::InsertMemory(int a_location, int a_contents)
+bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 {
 	if (a_location > MEMSZ || a_location < 0) {
 		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, a_location));
@@ -32,7 +32,27 @@ bool Emulator::InsertMemory(int a_location, int a_contents)
 		return false;
 	}
 
-	m_memory[a_location] = a_contents;
+	if (opCode == -1) {
+		m_memoryContents[a_location] = "??";
+		opCode = 0;
+	}
+	else {
+		m_memoryContents[a_location] = to_string(opCode / 10)
+									 + to_string(opCode % 10);
+	}
+
+	if (operand == -1) {
+		m_memoryContents[a_location] += "????";
+		operand = 0;
+	}
+	else {
+		m_memoryContents[a_location] += to_string(operand / 1000)
+									 + to_string((operand % 1000) / 100)
+									 + to_string((operand % 100) / 10)
+									 + to_string(operand % 10);
+	}
+
+	m_memory[a_location] = opCode * 10000 + operand;
 	
 	return true;
 }
@@ -46,20 +66,13 @@ bool Emulator::InsertMemory(int a_location, int a_contents)
 /// <date>11/17/2023</date>
 string Emulator::GetMemoryContent(int a_location)
 {
-	if (a_location == -1) {
-		return "??????";
+	if (a_location > MEMSZ || a_location < 0) {
+		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, a_location));
+
+		return "?????";
 	}
 
-	if (m_memory[a_location] == -1) {
-		return "??????";
-	}
-
-	return to_string(m_memory[a_location] / 100000)
-		+ to_string(m_memory[a_location] / 10000 % 10)
-		+ to_string(m_memory[a_location] / 1000 % 10)
-		+ to_string(m_memory[a_location] / 100 % 10)
-		+ to_string(m_memory[a_location] / 10 % 10)
-		+ to_string(m_memory[a_location] % 10);
+	return m_memoryContents[a_location];
 }
 
 /// <summary>
@@ -78,6 +91,7 @@ bool Emulator::RunProgram()
 	}
 
 	int loc = 100;
+	string line;
 	m_accum = 0;
 
 	while (loc < MEMSZ) {
@@ -112,7 +126,8 @@ bool Emulator::RunProgram()
 				break;
 			case 7: // READ
 				cout << "? ";
-				cin >> m_memory[operand];
+				cin >> line;
+				m_memory[operand] = stoi(line.substr(0, 6));
 				loc++;
 				break;
 			case 8: // WRITE
