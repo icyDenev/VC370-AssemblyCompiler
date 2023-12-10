@@ -27,7 +27,7 @@ Emulator::Emulator()
 bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 {
 	if (a_location > MEMSZ || a_location < 0) {
-		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, a_location));
+		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MEMORY_OVERFLOW, a_location));
 
 		return false;
 	}
@@ -69,7 +69,7 @@ bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 string Emulator::GetMemoryContent(int a_location)
 {
 	if (a_location > MEMSZ || a_location < 0) {
-		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, a_location));
+		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MEMORY_OVERFLOW, a_location));
 
 		return "?????";
 	}

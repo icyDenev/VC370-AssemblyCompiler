@@ -268,10 +268,16 @@ void Assembler::PassII() {
 				currErrors.push_back("Error: Syntax Error");
 			}
 
+			else if (m_inst.GetOperand().size() >= 10) {
+				currOperand = -1;
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_OPERAND_OVERFLOW, loc));
+				currErrors.push_back("Error: Operand overflow");
+			}
+
 			// If the operand is not a number within the limit, we record an error
 			else if (stoi(m_inst.GetOperand()) >= 1000000 || stoi(m_inst.GetOperand()) < 0) {
 				currOperand = -1;
-				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_CONSTANT_OVERFLOW, loc));
+				Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_OPERAND_OVERFLOW, loc));
 				currErrors.push_back("Error: Operand overflow");
 			}
 

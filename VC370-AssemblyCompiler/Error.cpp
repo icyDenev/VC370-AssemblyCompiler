@@ -60,8 +60,8 @@ void Error::DisplayErrors()
 			case ErrorCode::ERR_INVALID_OPCODE:
 				cout << "Invalid opcode" << endl;
 				break;
-			case ErrorCode::ERR_CONSTANT_OVERFLOW:
-				cout << "Constant overflow" << endl;
+			case ErrorCode::ERR_OPERAND_OVERFLOW:
+				cout << "Operand overflow" << endl;
 				break;
 			case ErrorCode::ERR_DUPLICATE_LABEL:
 				cout << "Duplicate label" << endl;
