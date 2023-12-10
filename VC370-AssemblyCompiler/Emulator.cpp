@@ -188,7 +188,13 @@ bool Emulator::RunProgram()
 /// <date>12/09/2023</date>
 bool Emulator::isInteger(const string& s)
 {
-	for (int i = 0; i < s.length(); i++)
+	int i = 0;
+
+	// If the first character is a minus sign, skip it
+	if (s[0] == '-')
+		++i;
+
+	for (; i < s.length(); i++)
 	{
 		if (!isdigit(s[i]))
 			return false;
