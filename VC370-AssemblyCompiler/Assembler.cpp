@@ -2,8 +2,22 @@
 #include "stdafx.h"
 #include "Error.h"
 
+/// <summary>
+/// Constructor for the Assembler class.
+/// </summary>
+/// <param name="argc"> The number of arguments passed to the program </param>
+/// <param name="argv"> The arguments passed to the program </param>
+/// <returns>Nothing</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/05/2023</date>
 Assembler::Assembler(int& argc, char* argv[]) : m_fileAcc(argc, argv) { }
 
+/// <summary>
+/// Destructor for the Assembler class.
+/// </summary>
+/// <returns>Nothing</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/05/2023</date>
 Assembler::~Assembler() { }
 
 /// <summary>
