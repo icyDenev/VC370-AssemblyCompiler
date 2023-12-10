@@ -32,6 +32,7 @@ bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 		return false;
 	}
 
+	// If the opCode is -1, the operand is invalid and, therefore, the memory location is empty
 	if (opCode == -1) {
 		m_memoryContents[a_location] = "??";
 		opCode = 0;
@@ -41,6 +42,7 @@ bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 									 + to_string(opCode % 10);
 	}
 
+	// If the operand is -1, the operand is invalid and, therefore, the memory location is empty
 	if (operand == -1) {
 		m_memoryContents[a_location] += "????";
 		operand = 0;
@@ -102,18 +104,22 @@ bool Emulator::RunProgram()
 		{
 			case 1: // ADD
 				m_accum += m_memory[operand];
+				m_accum %= 1000000;
 				loc++;
 				break;
 			case 2: // SUB
 				m_accum -= m_memory[operand];
+				m_accum %= 1000000;
 				loc++;
 				break;
 			case 3: // MULT
 				m_accum *= m_memory[operand];
+				m_accum %= 1000000;
 				loc++;
 				break;
 			case 4: // DIV
 				m_accum /= m_memory[operand];
+				m_accum %= 1000000;
 				loc++;
 				break;
 			case 5: // LOAD
@@ -127,7 +133,13 @@ bool Emulator::RunProgram()
 			case 7: // READ
 				cout << "? ";
 				cin >> line;
-				m_memory[operand] = stoi(line.substr(0, 6));
+				// If the input is not an integer, output an error and terminate
+				if (!isInteger(line)) {
+					cout << "Error: Invalid input" << endl;
+
+					return false;
+				}
+				m_memory[operand] = stoi(line[0] == '-' ? line.substr(0, 7) : line.substr(0, 6));
 				loc++;
 				break;
 			case 8: // WRITE
@@ -165,4 +177,22 @@ bool Emulator::RunProgram()
 	}
 
 	return false;
+}
+
+/// <summary>
+/// Checks if a string is an integer
+/// </summary>
+/// <param name="s"> The string to be checked</param>
+/// <returns> Returns true if the string is an integer</returns>
+/// <author>Hristo Denev</author>
+/// <date>12/09/2023</date>
+bool Emulator::isInteger(const string& s)
+{
+	for (int i = 0; i < s.length(); i++)
+	{
+		if (!isdigit(s[i]))
+			return false;
+	}
+
+	return true;
 }

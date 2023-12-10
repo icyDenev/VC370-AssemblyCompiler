@@ -23,6 +23,8 @@ public:
 	// Runs the VC370 program recorded in memory.
 	bool RunProgram();
 private:
+	// Check if a string is a valid integer
+	bool isInteger(const string& s);
 
 	// The VC370 has 10,000 words of memory.  Each word contains 6 decimal
 	int m_memory[MEMSZ];

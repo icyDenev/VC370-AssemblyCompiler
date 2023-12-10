@@ -82,7 +82,7 @@ void Error::DisplayErrors()
 				cout << "Syntax error" << endl;
 				break;
 			case ErrorCode::ERR_UNDEFINED_LABEL:
-				cout << "Undefined label" << endl;
+				cout << "Undefined label operand" << endl;
 				break;
 			case ErrorCode::ERR_INVALID_OPERAND:
 				cout << "Invalid operand" << endl;
@@ -95,6 +95,9 @@ void Error::DisplayErrors()
 				break;
 			case ErrorCode::ERR_ASSEMBLY_CODE_BEFORE_HALT:
 				cout << "Assembly code before HALT" << endl;
+				break;
+			case ErrorCode::ERR_INVALID_LABEL:
+				cout << "Invalid label" << endl;
 				break;
 			default:
 				break;

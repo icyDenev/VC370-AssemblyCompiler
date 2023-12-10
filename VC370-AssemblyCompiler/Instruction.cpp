@@ -11,15 +11,16 @@
 /// <date>11/30/2023</date>
 Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
 {
+    // Remove the comments from the instruction
     string line = RemoveComment(a_buff);
 
     // If after the comments are removed, the line is empty, then line is not an instruction of any kind
     if (line.find_first_not_of(" \t\n\r\f\v") == string::npos)
         return InstructionType::ST_COMMENT_OR_BLANK;
-
+    
+    // Divide the instruction into label, opCode and operand
     DivideInstruction(line);
 
-    //TODO: Used boost::to_upper_copy to make the opCode case insensitive
     if (m_opCode == "END")
         return InstructionType::ST_END;
     if (isAssemblyCode())
@@ -29,7 +30,6 @@ Instruction::InstructionType Instruction::ParseInstruction(const string& a_buff)
 
     return InstructionType::ST_ERROR;
 }
-
 
 /// <summary>
 /// Gets the memory location of the next instruction
@@ -75,7 +75,6 @@ std::string& Instruction::GetOperand()
 {
     return m_operand;
 }
-
 
 /// <summary>
 /// Returns the numeric value of the operand
@@ -205,17 +204,21 @@ void Instruction::DivideInstruction(const std::string& a_buff)
 
     m_extra = m_label = m_opCode = m_operand = "";
 
+    // If the buffer is empty, there is nothing to divide
     if (a_buff.empty())
         return;
 
     string extra;
 
+    // If the first character is not a space or a tab, then the line has a label
     if (a_buff[0] != ' ' && a_buff[0] != '\t')
     {
         inst >> m_label;
     }
 
     inst >> m_opCode >> m_operand >> m_extra;
+
+    // We make the opCode uppercase to make it case insensitive
     toUpper(m_opCode);
 
     return;
@@ -238,6 +241,13 @@ std::string Instruction::RemoveComment(const std::string& a_buff)
     return a_buff;
 }
 
+/// <summary>
+/// Makes all the characters in the string uppercase
+/// </summary>
+/// <param name="a_str">The string to be made uppercase</param>
+/// <returns>Nothing</returns>
+/// <author>Hristo Denev</author>
+/// <date>11/17/2023</date>
 void Instruction::toUpper(string& a_str)
 {
     for (int i = 0; i < a_str.length(); i++)
