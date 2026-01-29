@@ -283,4 +283,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - Inspired by classic assembler design principles
-- Built as part of systems programming coursework
+- Built as part of the Software Design Course (CMPS361)
