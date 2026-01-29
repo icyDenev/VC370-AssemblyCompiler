@@ -2,9 +2,6 @@
  * Assembler main program.
  */
 #include "stdafx.h"     // This must be present if you use precompiled headers which you will use. 
-#include <stdio.h>
-#include <string>
-
 #include "Assembler.h"
 
 int main(int argc, char* argv[])

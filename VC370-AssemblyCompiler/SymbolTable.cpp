@@ -6,15 +6,10 @@
 /// </summary>
 /// <param name="a_symbol">The symbol to be added</param>
 /// <param name="a_loc">The location of the symbol</param>
-/// <returns>nothing</returns>
-/// <author>Hristo Denev</author>
-/// <date>11/10/2023</date>
-void SymbolTable::AddSymbol(string& a_symbol, int a_loc)
+void SymbolTable::AddSymbol(const std::string& a_symbol, int a_loc)
 {
 	// If the symbol is already in the symbol table, record it as multiply defined.
-	auto result = m_symbolTable.find(a_symbol);
-	
-	if (result != m_symbolTable.end()) {
+	if (auto result = m_symbolTable.find(a_symbol); result != m_symbolTable.end()) {
 		result->second = multiplyDefinedSymbol;
 		return;
 	}
@@ -26,38 +21,32 @@ void SymbolTable::AddSymbol(string& a_symbol, int a_loc)
 /// <summary>
 /// Displays the symbol table
 /// </summary>
-/// <returns>nothing</returns>
-/// <author>Hristo Denev</author>
-/// <date>11/17/2023</date>
-void SymbolTable::DisplaySymbolTable()
+void SymbolTable::DisplaySymbolTable() const
 {
-	cout << "Symbol Table:" << endl;
-	cout << "Symbol #    Symbol    Location" << endl;
+	std::cout << "Symbol Table:\n";
+	std::cout << "Symbol #    Symbol    Location\n";
 	int i = 0;
 
-	for (auto item : m_symbolTable) {
-		cout << " " << setw(12) << left << i++ << setw(10) << left << item.first << setw(10) << left << item.second << endl;
+	for (const auto& [symbol, location] : m_symbolTable) {
+		std::cout << std::format(" {:<12}{:<10}{:<10}\n", i++, symbol, location);
 	}
 
-	cout << "____________________________________________\n\n";
+	std::cout << "____________________________________________\n\n";
 	system("pause");
-	cout << endl;
+	std::cout << '\n';
 }
 
 /// <summary>
 /// Looks up a symbol in the symbol table
 /// </summary>
 /// <param name="a_symbol">The symbol to be looked up</param>
-/// <param name="a_loc">The location of the symbol</param>
-/// <returns>True if the symbol is found, false otherwise</returns>
-/// <author>Hristo Denev</author>
-/// <date>11/17/2023</date>
-bool SymbolTable::LookupSymbol(string& a_symbol)
+/// <returns>True if the symbol is found and not multiply defined, false otherwise</returns>
+bool SymbolTable::LookupSymbol(std::string_view a_symbol) const
 {
-	if (m_symbolTable[a_symbol] != multiplyDefinedSymbol && m_symbolTable.find(a_symbol) != m_symbolTable.end()) {
-		return true;
+	const std::string symbolStr{a_symbol};
+	if (auto it = m_symbolTable.find(symbolStr); it != m_symbolTable.end()) {
+		return it->second != multiplyDefinedSymbol;
 	}
-
 	return false;
 }
 
@@ -65,12 +54,12 @@ bool SymbolTable::LookupSymbol(string& a_symbol)
 /// Returns the location of a symbol in the symbol table if it exists
 /// </summary>
 /// <param name="a_symbol">The symbol to be looked up</param>
-/// <returns>The location of the symbol if it exists, -1 otherwise</returns>
-int SymbolTable::GetSymbolLocation(string& a_symbol)
+/// <returns>The location of the symbol if it exists, 0 otherwise</returns>
+int SymbolTable::GetSymbolLocation(std::string_view a_symbol) const
 {
-	if (m_symbolTable.find(a_symbol) != m_symbolTable.end() || m_symbolTable[a_symbol] != multiplyDefinedSymbol) {
-		return m_symbolTable[a_symbol];
+	const std::string symbolStr{a_symbol};
+	if (auto it = m_symbolTable.find(symbolStr); it != m_symbolTable.end()) {
+		return it->second;
 	}
-
-	return -1;
+	return 0;
 }

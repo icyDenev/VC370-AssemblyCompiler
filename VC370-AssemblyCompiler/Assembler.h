@@ -14,8 +14,12 @@
 class Assembler {
 
 public:
-    Assembler(int &argc, char* argv[]);
-    ~Assembler();
+    Assembler(int argc, char* argv[]);
+    ~Assembler() = default;
+
+    // Prevent copying
+    Assembler(const Assembler&) = delete;
+    Assembler& operator=(const Assembler&) = delete;
 
     // Pass I - establish the locations of the symbols
     void PassI();
@@ -24,7 +28,7 @@ public:
     void PassII();
 
     // Display the symbols in the symbol table.
-    void DisplaySymbolTable() { m_symTab.DisplaySymbolTable(); }
+    void DisplaySymbolTable() const { m_symTab.DisplaySymbolTable(); }
 
     // Run emulator on the translation.
     void RunProgramInEmulator() { m_emul.RunProgram(); }
@@ -32,7 +36,7 @@ public:
 private:
 
     FileAccess m_fileAcc;	    // File Access object
-    SymbolTable m_symTab;	// Symbol table object
-    Instruction m_inst;	    // Instruction object
-    Emulator m_emul;        // Emulator object
+    SymbolTable m_symTab;	    // Symbol table object
+    Instruction m_inst;	        // Instruction object
+    Emulator m_emul;            // Emulator object
 };

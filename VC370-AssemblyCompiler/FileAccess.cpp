@@ -11,36 +11,33 @@
 /// </summary>
 /// <param name="argc">Number of program arguments</param>
 /// <param name="argv">Program arguments</param>
-/// <author>Hristo Denev</author>
-/// <date>11/05/2023</date>
-FileAccess::FileAccess(int& argc, char* argv[])
+FileAccess::FileAccess(int argc, char* argv[])
 {
     // Check that there is exactly one run time parameter.
     if (argc != 2) {
-        cerr << "Usage: Assem <FileName>" << endl;
-        exit(1);
+        std::cerr << "Usage: Assem <FileName>\n";
+        std::exit(1);
     }
 
-    // Open the file.  One might question if this is the best place to open the file.
-    // One might also question whether we need a file access class.
-    m_sfile.open(argv[1], ios::in);
+    // Open the file.
+    m_sfile.open(argv[1], std::ios::in);
 
     // If the open failed, report the error and terminate.
     if (!m_sfile) {
-        cerr << "Source file could not be opened, assembler terminated."
-            << endl;
-        exit(1);
+        std::cerr << "Source file could not be opened, assembler terminated.\n";
+        std::exit(1);
     }
 }
 
 /// <summary>
 /// Destructor that closes the file
 /// </summary>
-/// <author>Hristo Denev</author>
-/// <date>11/05/2023</date>
 FileAccess::~FileAccess()
 {
-	m_sfile.close();
+    // ifstream automatically closes in destructor, but explicit close is fine
+    if (m_sfile.is_open()) {
+        m_sfile.close();
+    }
 }
 
 /// <summary>
@@ -53,29 +50,18 @@ FileAccess::~FileAccess()
 /// Returns true if there is another line.
 /// Returns false if the end of the file is reached.
 /// </returns>
-/// <author>Hristo Denev</author>
-/// <date>11/05/2023</date>
 bool FileAccess::GetNextLine(std::string& a_buff)
 {
-    // If there is no more data, return false
-	if (m_sfile.eof())
-	{
-		return false;
-	}
-	
-    // Read the next line since the end of the file is not reached
-	getline(m_sfile, a_buff);
-	return true;
+	// Read and return in one step; if there is no more data, the getline will fail and return false
+    return static_cast<bool>(std::getline(m_sfile, a_buff));
 }
 
 /// <summary>
 /// Rewinds the file to the beginning.
 /// </summary>
-/// <author>Hristo Denev</author>
-/// <date>11/05/2023</date>
 void FileAccess::Rewind()
 {
     // Clean the file and set the pointer to the beginning
-	m_sfile.clear();
-	m_sfile.seekg(0, std::ios::beg);
+    m_sfile.clear();
+    m_sfile.seekg(0, std::ios::beg);
 }

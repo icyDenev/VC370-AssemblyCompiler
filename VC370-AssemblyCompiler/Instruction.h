@@ -1,12 +1,14 @@
 #pragma once
 
 #include "stdafx.h"
+#include <array>
+#include <string_view>
 
 class Instruction
 {
 public:
-	Instruction() {}
-	~Instruction() {}
+	Instruction() = default;
+	~Instruction() = default;
 
 	enum class InstructionType {
 		ST_ASSEMBLY,
@@ -18,42 +20,44 @@ public:
 
 	// Parse the instruction into label, opcode, operand and returns
 	// the type of instruction
-	InstructionType ParseInstruction(const std::string &a_buff);
+	[[nodiscard]] InstructionType ParseInstruction(std::string_view a_buff);
 
 	// Gets the memory location of the next instruction
-	int NextInstructionLocation(const int &a_loc);
+	[[nodiscard]] static constexpr int NextInstructionLocation(int a_loc) noexcept {
+		return a_loc + 1;
+	}
 	
 	// Returns the label of the instruction
-	std::string &GetLabel();
+	[[nodiscard]] const std::string& GetLabel() const noexcept { return m_label; }
 
 	// Returns the op code of the instruction
-	std::string &GetOpCode();
+	[[nodiscard]] const std::string& GetOpCode() const noexcept { return m_opCode; }
 
 	// Returns the operand of the instruction
-	std::string &GetOperand();
+	[[nodiscard]] const std::string& GetOperand() const noexcept { return m_operand; }
 
 	// Returns the numeric value of the operation code
-	int GetNumericOpCodeValue();
+	[[nodiscard]] int GetNumericOpCodeValue() const noexcept;
 
 	// Returns true if the instruction has a label
-	bool IsLabelBlank();
+	[[nodiscard]] bool IsLabelBlank() const noexcept { return m_label.empty(); }
 
 	// Returns true if the instruction has extra elements
-	bool IsExtraBlank();
+	[[nodiscard]] bool IsExtraBlank() const noexcept { return m_extra.empty(); }
 
 	// Returns true if the instruction has an operand
-	bool IsOperandBlank();
+	[[nodiscard]] bool IsOperandBlank() const noexcept { return m_operand.empty(); }
 
 	// Returns true if the operand is numeric
-	bool IsOperandNumeric();
+	[[nodiscard]] bool IsOperandNumeric() const noexcept;
 
 private:
-	void DivideInstruction(const std::string& a_buff);
-	std::string RemoveComment(const std::string& a_buff);
-	void toUpper(std::string &a_str);
+	void DivideInstruction(std::string_view a_buff);
+	[[nodiscard]] static std::string RemoveComment(std::string_view a_buff);
+	static void toUpper(std::string& a_str) noexcept;
 
-	bool isAssemblyCode();
-	bool isMachineCode();
+	[[nodiscard]] bool isAssemblyCode() const noexcept;
+	[[nodiscard]] bool isMachineCode() const noexcept;
 
 	std::string m_label;
 	std::string m_opCode;
@@ -61,11 +65,16 @@ private:
 	std::string m_extra;
 
 	std::string m_instruction;
-	InstructionType m_type;
+	InstructionType m_type{};
 
-	int m_numericOperandValue;
-
-	string MachineLangInstructions[13] { "ADD", "SUB", "MULT", "DIV", "LOAD", "STORE", "READ", "WRITE", "B", "BM", "BZ", "BP", "HALT" };
-	string AssemblyLangInstructions[4] { "DC", "DS", "ORG", "END" };
+	// Machine language instructions using std::array and string_view
+	static constexpr std::array<std::string_view, 13> MachineLangInstructions = {
+		"ADD", "SUB", "MULT", "DIV", "LOAD", "STORE", "READ", "WRITE", "B", "BM", "BZ", "BP", "HALT"
+	};
+	
+	// Assembly language instructions using std::array and string_view
+	static constexpr std::array<std::string_view, 4> AssemblyLangInstructions = {
+		"DC", "DS", "ORG", "END"
+	};
 };
 

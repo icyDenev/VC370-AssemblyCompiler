@@ -8,27 +8,25 @@
 /// <author>Hristo Denev</author>
 /// <date>11/19/2023</date>
 Emulator::Emulator()
+	: m_memory{}
+	, m_memoryContents{}
+	, m_accum(0)
 {
-	for (int i = 0; i < MEMSZ; i++) {
-		m_memory[i] = 0;
-	}
-	
-	m_accum = 0;
 }
 
 /// <summary>
 /// Inserts a memory location and contents into the emulator's memory.
 /// </summary>
 /// <param name="a_location">The location of the memory</param>
-/// <param name="a_contents">The contents of the memory</param>
+/// <param name="opCode">The operation code</param>
+/// <param name="operand">The operand value</param>
 /// <returns>True if the memory was inserted successfully</returns>
 /// <author>Hristo Denev</author>
 /// <date>11/19/2023</date>
 bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 {
-	if (a_location > MEMSZ || a_location < 0) {
+	if (a_location >= MEMSZ || a_location < 0) {
 		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MEMORY_OVERFLOW, a_location));
-
 		return false;
 	}
 
@@ -38,8 +36,7 @@ bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 		opCode = 0;
 	}
 	else {
-		m_memoryContents[a_location] = to_string(opCode / 10)
-									 + to_string(opCode % 10);
+		m_memoryContents[a_location] = std::format("{:02d}", opCode);
 	}
 
 	// If the operand is -1, the operand is invalid and, therefore, the memory location is empty
@@ -48,10 +45,7 @@ bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 		operand = 0;
 	}
 	else {
-		m_memoryContents[a_location] += to_string(operand / 1000)
-									 + to_string((operand % 1000) / 100)
-									 + to_string((operand % 100) / 10)
-									 + to_string(operand % 10);
+		m_memoryContents[a_location] += std::format("{:04d}", operand);
 	}
 
 	m_memory[a_location] = opCode * 10000 + operand;
@@ -66,12 +60,11 @@ bool Emulator::InsertMemory(int a_location, int opCode, int operand)
 /// <returns>Returns the contents of the memory location specified by a_location</returns>
 /// <author>Hristo Denev</author>
 /// <date>11/17/2023</date>
-string Emulator::GetMemoryContent(int a_location)
+std::string Emulator::GetMemoryContent(int a_location) const
 {
-	if (a_location > MEMSZ || a_location < 0) {
+	if (a_location >= MEMSZ || a_location < 0) {
 		Error::RecordError(Error::ErrorMsg(Error::ErrorCode::ERR_MEMORY_OVERFLOW, a_location));
-
-		return "?????";
+		return "??????";
 	}
 
 	return m_memoryContents[a_location];
@@ -85,20 +78,18 @@ string Emulator::GetMemoryContent(int a_location)
 /// <date>NOT IMPLEMENTED YET</date>
 bool Emulator::RunProgram()
 {
-	// TODO: Add your implementation code here.
 	if (Error::WasThereErrors()) {
 		Error::DisplayErrors();
-
 		exit(-1);
 	}
 
 	int loc = 100;
-	string line;
+	std::string line;
 	m_accum = 0;
 
 	while (loc < MEMSZ) {
-		int opcode = m_memory[loc] / 10000;
-		int operand = m_memory[loc] % 10000;
+		const int opcode = m_memory[loc] / 10000;
+		const int operand = m_memory[loc] % 10000;
 
 		switch (opcode)
 		{
@@ -131,19 +122,18 @@ bool Emulator::RunProgram()
 				loc++;
 				break;
 			case 7: // READ
-				cout << "? ";
-				cin >> line;
+				std::cout << "? ";
+				std::cin >> line;
 				// If the input is not an integer, output an error and terminate
 				if (!isInteger(line)) {
-					cout << "Error: Invalid input" << endl;
-
+					std::cout << "Error: Invalid input\n";
 					return false;
 				}
-				m_memory[operand] = stoi(line[0] == '-' ? line.substr(0, 7) : line.substr(0, 6));
+				m_memory[operand] = std::stoi(line[0] == '-' ? line.substr(0, 7) : line.substr(0, 6));
 				loc++;
 				break;
 			case 8: // WRITE
-				cout << m_memory[operand] << endl;
+				std::cout << m_memory[operand] << '\n';
 				loc++;
 				break;
 			case 9: // BRANCH
@@ -172,7 +162,8 @@ bool Emulator::RunProgram()
 				break;
 			case 13: // HALT
 				return true;
-			
+			default:
+				break;
 		}
 	}
 
@@ -182,23 +173,20 @@ bool Emulator::RunProgram()
 /// <summary>
 /// Checks if a string is an integer
 /// </summary>
-/// <param name="s"> The string to be checked</param>
-/// <returns> Returns true if the string is an integer</returns>
+/// <param name="s">The string view to be checked</param>
+/// <returns>Returns true if the string is an integer</returns>
 /// <author>Hristo Denev</author>
 /// <date>12/09/2023</date>
-bool Emulator::isInteger(const string& s)
+bool Emulator::isInteger(std::string_view s) noexcept
 {
-	int i = 0;
+	if (s.empty()) return false;
 
+	size_t start = 0;
 	// If the first character is a minus sign, skip it
-	if (s[0] == '-')
-		++i;
-
-	for (; i < s.length(); i++)
-	{
-		if (!isdigit(s[i]))
-			return false;
+	if (s[0] == '-') {
+		if (s.length() == 1) return false;
+		start = 1;
 	}
 
-	return true;
+	return std::ranges::all_of(s.substr(start), [](unsigned char c) { return std::isdigit(c); });
 }

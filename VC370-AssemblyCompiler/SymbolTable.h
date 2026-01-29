@@ -3,32 +3,34 @@
 //
 #pragma once
 #include "stdafx.h"
+#include <unordered_map>
+#include <string_view>
 
 // This class is our symbol table.
 class SymbolTable {
 
 public:
-    // Get rid of constructor and destructor if you don't need them.
-    SymbolTable() {};
-    ~SymbolTable() {};
+    SymbolTable() = default;
+    ~SymbolTable() = default;
 
-    const int multiplyDefinedSymbol = -999;
+    static constexpr int multiplyDefinedSymbol = -999;
 
     // Add a new symbol to the symbol table.
-    void AddSymbol(string& a_symbol, int a_loc);
+    void AddSymbol(const std::string& a_symbol, int a_loc);
 
     // Display the symbol table.
-    void DisplaySymbolTable();
+    void DisplaySymbolTable() const;
 
     // Lookup a symbol in the symbol table.
-    bool LookupSymbol(string& a_symbol);
+    [[nodiscard]] bool LookupSymbol(std::string_view a_symbol) const;
 
     // Get location of symbol in the symbol table.
-    int GetSymbolLocation(string& a_symbol);
+    [[nodiscard]] int GetSymbolLocation(std::string_view a_symbol) const;
 
 private:
 
     // This is the actual symbol table.  The symbol is the key to the map.
-    map<string, int> m_symbolTable;
+    // Using unordered_map for O(1) average lookup
+    std::unordered_map<std::string, int> m_symbolTable;
 
 };
